@@ -1,25 +1,8 @@
-<!-- Toolbar sunset -->
-<mat-toolbar
-  class="!px-6 !bg-gradient-to-r !from-yellow-400 !via-orange-400 !to-red-500 !text-black !shadow-lg"
->
-  <span class="!text-lg !font-semibold !tracking-tight">
-    DevSchool
-  </span>
-
-  <span class="flex-1"></span>
-
-  <button mat-button class="!text-black/80 hover:!text-black">
-    Ayuda
-  </button>
-</mat-toolbar>
-
-<!-- Fondo Sunset Oscuro -->
 <main
-  class="!min-h-[calc(100vh-64px)] !flex !items-center !justify-center !bg-stone-900 !text-slate-50"
+  class="!min-h-[calc(100vh)] !flex !items-center !justify-center !bg-stone-900 !text-slate-50"
 >
   <div class="max-w-4xl w-full px-6 py-10">
     <div class="grid gap-10 md:grid-cols-[2fr,1.5fr] items-center">
-      
       <!-- Presentación -->
       <section>
         <p class="!text-sm !uppercase !tracking-[0.25em] !text-yellow-400 !mb-3">
@@ -27,33 +10,24 @@
         </p>
 
         <h1 class="!text-4xl md:!text-5xl !font-extrabold !tracking-tight !mb-4">
-          Bienvenido a 
+          Bienvenido a
           <span class="!text-orange-400">DevSchool</span>
         </h1>
 
-        <p class="!text-base md:!text-lg !text-slate-300 !mb-6">
-          Aprende y mejora tu nivel técnico con
-          <strong class="!text-orange-300">DevSchool</strong>.
+        <p class="text-base md:text-lg text-slate-300 mb-6">
+          Desarrolla tus habilidades técnicas, refuerza tus conocimientos y progresa a tu propio
+          ritmo con
+          <strong class="text-orange-300">DevSchool</strong>, la plataforma diseñada para
+          acompañarte en tu crecimiento académico.
         </p>
 
         <div class="flex flex-wrap gap-3 mb-6">
-
           <!-- Botón Sunset principal con ! -->
           <button
             mat-raised-button
-            class="!bg-gradient-to-r !from-yellow-400 !via-orange-400 !to-red-500 
-                   !text-black !font-semibold !px-6 !py-2 !rounded-lg 
-                   !shadow-lg !shadow-orange-500/30"
+            class="!bg-gradient-to-r !from-yellow-400 !via-orange-400 !to-red-500 !text-black !font-semibold !px-6 !py-2 !rounded-lg !shadow-lg !shadow-orange-500/30"
           >
             Empezar ahora
-          </button>
-
-          <!-- Botón secundario -->
-          <button
-            mat-stroked-button
-            class="!border-orange-400 !text-orange-300 hover:!bg-orange-400/10"
-          >
-            Ver características
           </button>
         </div>
 
@@ -77,22 +51,16 @@
 
       <!-- Tarjeta lateral -->
       <section>
-        <mat-card
-          class="!bg-stone-800/80 !text-slate-50 !border !border-orange-500/40 !shadow-xl"
-        >
+        <mat-card class="!bg-stone-800/80 !text-slate-50 !border !border-orange-500/40 !shadow-xl">
           <mat-card-header>
             <div
               mat-card-avatar
               class="!bg-gradient-to-br !from-yellow-400 !to-orange-500 !rounded-full"
             ></div>
 
-            <mat-card-title class="!text-slate-50 !text-lg">
-              DevSchool Client
-            </mat-card-title>
+            <mat-card-title class="!text-slate-50 !text-lg"> DevSchool Client </mat-card-title>
 
-            <mat-card-subtitle class="!text-orange-300">
-              Panel para estudiantes
-            </mat-card-subtitle>
+            <mat-card-subtitle class="!text-orange-300"> Panel para estudiantes </mat-card-subtitle>
           </mat-card-header>
 
           <mat-card-content class="!mt-4 !space-y-3 !text-sm !text-slate-300">
@@ -103,19 +71,6 @@
               <li>Progreso del estudiante</li>
             </ul>
           </mat-card-content>
-
-          <mat-card-actions class="!mt-4 !flex !justify-end !gap-2">
-            <button mat-button class="!text-orange-300 hover:!text-orange-200">
-              Detalles del proyecto
-            </button>
-
-            <button
-              mat-raised-button
-              class="!bg-orange-500 hover:!bg-orange-600 !text-white"
-            >
-              Próximamente: Login
-            </button>
-          </mat-card-actions>
         </mat-card>
       </section>
     </div>

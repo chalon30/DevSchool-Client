@@ -1,4 +1,84 @@
 @import "tailwindcss";
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/* ============================================
+   🟧 Tema Global Sunset — DevSchool 
+   ============================================ */
+
+:root {
+  --ds-bg: #0f172a;        /* Fondo oscuro (slate-950) */
+  --ds-bg-soft: #1e293b;   /* Slate-800 */
+  --ds-text-main: #e2e8f0; /* Slate-200 */
+  --ds-yellow: #facc15;    /* Yellow-400 */
+  --ds-orange: #fb923c;    /* Orange-400 */
+  --ds-red: #ef4444;       /* Red-500 */
+}
+
+/* ============================================
+   🔤 Fuente base + reset minimal
+   ============================================ */
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: var(--ds-bg);
+  color: var(--ds-text-main);
+}
+
+/* ============================================
+   🎨 Clases de diseño global Sunset
+   ============================================ */
+
+/* Fondo general reutilizable */
+.ds-main {
+  background-color: var(--ds-bg);
+  color: var(--ds-text-main);
+}
+
+/* Badge superior */
+.ds-hero-badge {
+  color: var(--ds-yellow);
+}
+
+/* Parte del título (DevSchool) */
+.ds-title-highlight {
+  color: var(--ds-orange);
+}
+
+/* Texto destacado */
+.ds-text-highlight {
+  color: var(--ds-orange);
+}
+
+/* Tarjeta lateral del Home */
+.ds-card {
+  background-color: rgba(30, 41, 59, 0.85); /* slate-800/85 */
+  color: var(--ds-text-main);
+  border: 1px solid rgba(251, 146, 60, 0.6); /* orange-400 */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+  border-radius: 12px;
+}
+
+/* Avatar con degradado Sunset */
+.ds-avatar {
+  background: linear-gradient(135deg, var(--ds-yellow), var(--ds-orange));
+}
+
+/* Botón principal Sunset */
+.ds-btn-primary {
+  background: linear-gradient(90deg, var(--ds-yellow), var(--ds-orange), var(--ds-red));
+  color: #0f172a !important;
+  font-weight: 600;
+  box-shadow: 0 12px 30px rgba(251, 146, 60, 0.45);
+  border-radius: 10px;
+}
+
+/* Hover botón principal */
+.ds-btn-primary:hover {
+  filter: brightness(1.06);
+}
+
+/* Íconos */
+.ds-icon-yellow { color: var(--ds-yellow); }
+.ds-icon-orange { color: var(--ds-orange); }
+.ds-icon-red { color: var(--ds-red); }
