@@ -79,21 +79,14 @@ export class Login {
             };
 
             // 2. Guardar usuario + token en localStorage
-            this.authService.guardarUsuarioConToken(
-              usuarioSesion,
-              respuesta.token
-            );
+            this.authService.guardarUsuarioConToken(usuarioSesion, respuesta.token);
 
             this.cargando = false;
             this.exito = true;
 
             // 3. Mostrar feedback + redirigir
             setTimeout(() => {
-              this.mostrarSnackBar(
-                'Sesión iniciada correctamente',
-                'snackbar-success',
-                'bottom'
-              );
+              this.mostrarSnackBar('Sesión iniciada correctamente', 'snackbar-success', 'bottom');
             }, 1300);
 
             setTimeout(() => {
@@ -111,20 +104,13 @@ export class Login {
               esAdmin: respuesta.esAdmin,
             };
 
-            this.authService.guardarUsuarioConToken(
-              usuarioSesion,
-              respuesta.token
-            );
+            this.authService.guardarUsuarioConToken(usuarioSesion, respuesta.token);
 
             this.cargando = false;
             this.exito = true;
 
             setTimeout(() => {
-              this.mostrarSnackBar(
-                'Sesión iniciada (sin nombre)',
-                'snackbar-success',
-                'bottom'
-              );
+              this.mostrarSnackBar('Sesión iniciada (sin nombre)', 'snackbar-success', 'bottom');
             }, 1300);
 
             setTimeout(() => {
@@ -135,19 +121,21 @@ export class Login {
           },
         });
       },
-      error: () => {
+      error: (err) => {
         this.cargando = false;
-        this.error = 'Correo o clave incorrectos';
+
+        if (err?.error?.error?.includes('no activada')) {
+          this.error = 'Tu cuenta aún no está activada. Revisa tu correo.';
+        } else {
+          this.error = 'Correo o contraseña incorrectos';
+        }
+
         this.mostrarSnackBar(this.error, 'snackbar-error', 'bottom');
       },
     });
   }
 
-  private mostrarSnackBar(
-    mensaje: string,
-    panelClass: string,
-    position: 'top' | 'bottom' = 'top'
-  ) {
+  private mostrarSnackBar(mensaje: string, panelClass: string, position: 'top' | 'bottom' = 'top') {
     this.snackBar.open(mensaje, 'Cerrar', {
       duration: 4000,
       horizontalPosition: 'center',

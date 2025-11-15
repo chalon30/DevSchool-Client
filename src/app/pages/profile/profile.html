@@ -1,0 +1,67 @@
+<div
+  class="min-h-[calc(100vh-64px)] flex items-center justify-center 
+         px-4 py-10 bg-cover bg-center bg-fixed"
+  style="background-image: url('/fnd1.webp');"
+>
+  <mat-card
+    class="profile-card w-full max-w-lg rounded-3xl shadow-xl 
+           bg-transparent border border-white/30 p-8"
+  >
+    <!-- Header del perfil -->
+    <div class="flex flex-col items-center text-center mb-8">
+      <div
+        class="w-14 h-14 rounded-full bg-white/20 
+               flex items-center justify-center text-white shadow-inner mb-4"
+      >
+        <mat-icon class="!text-white text-4xl">account_circle</mat-icon>
+      </div>
+
+      <h2 class="text-2xl font-bold text-white">
+        {{ usuario?.nombre || 'Usuario' }}
+      </h2>
+      <p class="text-sm text-gray-200 mt-1">
+        {{ usuario?.correo }}
+      </p>
+    </div>
+
+    <!-- Información -->
+    <div class="space-y-4 mb-8">
+      <div class="flex items-center gap-3 text-base text-gray-200">
+        <mat-icon class="text-lg !text-orange-300">badge</mat-icon>
+        <span class="font-semibold text-white">Rol:</span>
+        <span class="uppercase tracking-wide text-gray-100">
+          {{ usuario?.rol || 'Usuario' }}
+        </span>
+      </div>
+
+      <div class="flex items-center gap-3 text-base text-gray-200">
+        <mat-icon class="text-lg !text-orange-300">verified_user</mat-icon>
+        <span class="font-semibold text-white">Tipo de cuenta:</span>
+        <span class="text-gray-100">
+          {{ usuario?.esAdmin ? 'Administrador' : 'Estándar' }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Acciones -->
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <button
+        mat-stroked-button
+        class="!border-white !text-white !rounded-xl px-6 py-2 hover:bg-white/10 transition"
+        (click)="irAHome()"
+      >
+        <mat-icon class="mr-2 !text-white">home</mat-icon>
+        Inicio
+      </button>
+
+      <button
+        mat-raised-button
+        class="!rounded-xl bg-[#b33038] hover:bg-[#8f262c] px-6 py-2 text-white"
+        (click)="logout()"
+      >
+        <mat-icon class="mr-2 !text-white">logout</mat-icon>
+        Cerrar sesión
+      </button>
+    </div>
+  </mat-card>
+</div>
