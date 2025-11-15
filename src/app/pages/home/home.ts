@@ -1,13 +1,11 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Hero } from '../../components/hero/hero'; 
 
 @Component({
   selector: 'app-home',
-  standalone: true,           
-  imports: [CommonModule],     
+  standalone: true,
+  imports: [Hero], 
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
-export class Home {
-
-}
+export class Home {}

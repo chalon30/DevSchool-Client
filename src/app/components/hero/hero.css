@@ -1,0 +1,56 @@
+/* Animación general fade-up */
+@keyframes heroFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animación imagen desde la derecha */
+@keyframes heroSlideRight {
+  from {
+    opacity: 0;
+    transform: translateX(60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Estado inicial */
+.hero-kicker,
+.hero-title,
+.hero-subtitle,
+.hero-text,
+.hero-image {
+  opacity: 0;
+}
+
+/* Animación escalonada del texto */
+.hero-kicker {
+  animation: heroFadeUp 0.7s ease-out forwards;
+  animation-delay: 0.05s;
+}
+.hero-title {
+  animation: heroFadeUp 0.8s ease-out forwards;
+  animation-delay: 0.15s;
+}
+.hero-subtitle {
+  animation: heroFadeUp 0.9s ease-out forwards;
+  animation-delay: 0.30s;
+}
+.hero-text {
+  animation: heroFadeUp 1.0s ease-out forwards;
+  animation-delay: 0.45s;
+}
+
+/* Animación imagen */
+.hero-image {
+  animation: heroSlideRight 1s ease-out forwards;
+  animation-delay: 0.60s;
+}
