@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { Hero } from '../../components/hero/hero'; 
+import { TechCarousel } from '../../components/tech-carousel/tech-carousel';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [Hero], 
+  imports: [Hero, TechCarousel], 
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

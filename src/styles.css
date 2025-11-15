@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "swiper/css";
+@import "swiper/css/autoplay";
 
 html,
 body {
@@ -9,7 +11,7 @@ body {
 
 /* Fondo oscuro global sin @apply */
 body {
-  background-color: #0c0a09;
+  background-color: #131313;
   color: #e5e7eb;             
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
