@@ -1,0 +1,199 @@
+/* CONTENEDOR MONEDA */
+.coin-wrapper {
+  width: 260px;
+  height: 260px;
+  position: relative;
+  perspective: 900px;
+  cursor: pointer;
+  transform-style: preserve-3d;
+
+  /* Estado inicial: apagada para la entrada */
+  opacity: 0;
+  transform: translateY(30px) scale(0.9) rotateX(12deg);
+}
+
+@media (min-width: 768px) {
+  .coin-wrapper {
+    width: 360px;
+    height: 360px;
+  }
+}
+
+/* Cuando la sección está en vista, entrada pro + luego idle */
+.about-section.in-view .coin-wrapper {
+  animation:
+    coinEnter 0.9s cubic-bezier(0.19, 1, 0.22, 1) forwards,
+    coinIdle 5s ease-in-out 0.9s infinite;
+}
+
+/* Caras de la moneda */
+.coin-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+.coin-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+  transition: transform 0.8s ease-in-out, box-shadow 0.3s ease-out;
+
+  padding: 0.6rem;
+  background: radial-gradient(circle at 30% 20%, #fbbf24, #b45309);
+}
+
+.coin-face img {
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  object-fit: contain;
+  background-color: #020617;
+}
+
+/* Cara frontal */
+.coin-front {
+  transform: rotateY(0deg);
+}
+
+/* Cara trasera */
+.coin-back {
+  transform: rotateY(180deg);
+}
+
+/* Animación de entrada 3D */
+@keyframes coinEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.9) rotateX(18deg) rotateY(-12deg);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-6px) scale(1.02) rotateX(4deg) rotateY(4deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotateX(0deg) rotateY(0deg);
+  }
+}
+
+/* Idle flotante suave */
+@keyframes coinIdle {
+  0% {
+    transform: translateY(0) rotateY(-6deg);
+  }
+  50% {
+    transform: translateY(-8px) rotateY(6deg);
+  }
+  100% {
+    transform: translateY(0) rotateY(-6deg);
+  }
+}
+
+/* Hover: detenemos idle y hacemos flip fuerte */
+.coin-wrapper:hover {
+  animation: none;
+  transform: translateY(-6px) scale(1.03);
+}
+
+.coin-wrapper:hover .coin-front {
+  transform: rotateY(-180deg);
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.6);
+}
+
+.coin-wrapper:hover .coin-back {
+  transform: rotateY(0deg);
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.6);
+}
+
+
+/* Estado inicial: oculto + blur + ligera traslación */
+.about-section .animate-fadeInLeft,
+.about-section .animate-fadeInRight {
+  opacity: 0;
+  filter: blur(8px);
+}
+
+/* Cuando el section entra en pantalla, activa contenedores principal */
+.about-section.in-view .animate-fadeInLeft {
+  animation: fadeInLeft 0.85s cubic-bezier(0.17, 0.55, 0.55, 1) forwards;
+}
+
+.about-section.in-view .animate-fadeInRight {
+  animation: fadeInRight 0.85s cubic-bezier(0.17, 0.55, 0.55, 1) forwards;
+}
+
+/* Stagger en los elementos internos de texto */
+.about-item {
+  opacity: 0;
+  transform: translateY(18px);
+  filter: blur(8px);
+}
+
+.about-section.in-view .about-item-1 {
+  animation: fadeUpItem 0.5s ease-out 0.15s forwards;
+}
+
+.about-section.in-view .about-item-2 {
+  animation: fadeUpItem 0.55s ease-out 0.3s forwards;
+}
+
+.about-section.in-view .about-item-3 {
+  animation: fadeUpItem 0.6s ease-out 0.45s forwards;
+}
+
+.about-section.in-view .about-item-4 {
+  animation: fadeUpItem 0.6s ease-out 0.6s forwards;
+}
+
+/* Animaciones base */
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateX(-40px) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateX(0) translateY(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateX(40px) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateX(0) translateY(0);
+  }
+}
+
+@keyframes fadeUpItem {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(18px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+/* Versión algo más rápida en móviles */
+@media (max-width: 480px) {
+  .about-section.in-view .animate-fadeInLeft,
+  .about-section.in-view .animate-fadeInRight {
+    animation-duration: 0.65s;
+  }
+}
