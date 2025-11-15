@@ -1,44 +1,59 @@
 <mat-toolbar
   class="!bg-stone-900 !text-slate-50 !px-4 sm:!px-6 !py-3 shadow-lg flex items-center justify-between"
 >
-  <!-- Logo + título como link -->
-  <a
-    routerLink="/home"
-    class="flex items-center gap-2 sm:gap-3 hover:!text-orange-400 transition"
-  >
+  <!-- Logo -->
+  <a routerLink="/home" class="flex items-center gap-2 sm:gap-3 hover:!text-orange-400 transition">
     <mat-icon class="!text-orange-400 text-2xl sm:text-3xl">school</mat-icon>
-    <span class="font-extrabold text-lg sm:text-xl tracking-wide">
-      DevSchool
-    </span>
+    <span class="font-extrabold text-lg sm:text-xl tracking-wide"> DevSchool </span>
   </a>
 
-  <!-- Navegación desktop -->
+  <!-- NAV DESKTOP -->
   <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+    <!-- Home -->
     <a routerLink="/home" class="flex items-center gap-1 hover:!text-orange-400 transition">
       <mat-icon class="text-base">home</mat-icon>
       Inicio
     </a>
 
+    <!-- Cursos -->
     <a routerLink="/courses" class="flex items-center gap-1 hover:!text-orange-400 transition">
       <mat-icon class="text-base">menu_book</mat-icon>
       Cursos
     </a>
 
-    <!-- <a routerLink="/profile" class="flex items-center gap-1 hover:!text-orange-400 transition">
-      <mat-icon class="text-base">account_circle</mat-icon>
-      Perfil
-    </a> -->
-
+    <!-- Si NO hay sesión: Ingresar -->
+    @if (!usuario) {
     <a routerLink="/login" class="flex items-center gap-1 hover:!text-orange-400 transition">
       <mat-icon class="text-base">login</mat-icon>
       Ingresar
     </a>
+    }
+
+    <!-- Si hay sesión: Menú de usuario -->
+    @if (usuario) {
+    <button
+      mat-button
+      [matMenuTriggerFor]="userMenu"
+      class="user-button flex items-center gap-2 text-slate-100 hover:!text-orange-400 transition"
+    >
+      <!-- SIN color aquí, solo tamaño -->
+      <mat-icon class="text-xl">account_circle</mat-icon>
+
+      <!-- SIN text-slate-100 aquí -->
+      <span class="font-semibold">
+        {{ usuario.nombre }}
+      </span>
+
+      <!-- SIN color aquí -->
+      <mat-icon class="!text-xs">expand_more</mat-icon>
+    </button>
+    }
   </nav>
 
-  <!-- Menú móvil (hamburguesa) -->
+  <!-- Botón hamburguesa (solo móvil) -->
   <button
     mat-icon-button
-    class="menu-toggle flex items-center justify-center"
+    class="menu-toggle flex items-center justify-center md:hidden"
     (click)="toggleMobile()"
     aria-label="Abrir menú de navegación"
   >
@@ -46,45 +61,92 @@
   </button>
 </mat-toolbar>
 
-<!-- Menú móvil desplegable -->
+<!-- Menú desplegable de usuario (desktop) -->
+<mat-menu #userMenu="matMenu">
+  <button mat-menu-item routerLink="/profile">
+    <mat-icon>person</mat-icon>
+    <span>Mi perfil</span>
+  </button>
+
+  <mat-divider></mat-divider>
+
+  <button mat-menu-item (click)="logout()">
+    <mat-icon>logout</mat-icon>
+    <span>Cerrar sesión</span>
+  </button>
+</mat-menu>
+
+<!-- NAV MÓVIL -->
 @if (mobileOpen) {
-  <nav
-    class="md:hidden !bg-stone-900 !text-slate-50 px-4 pb-4 flex flex-col gap-3 text-sm font-medium shadow-lg"
+<nav
+  class="md:hidden !bg-stone-900 !text-slate-50 px-4 pb-4 flex flex-col gap-3 text-sm font-medium shadow-lg"
+>
+  <!-- Inicio -->
+  <a
+    routerLink="/home"
+    class="flex items-center gap-2 hover:!text-orange-400 transition"
+    (click)="toggleMobile()"
   >
-    <a
-      routerLink="/home"
-      class="flex items-center gap-2 hover:!text-orange-400 transition"
-      (click)="toggleMobile()"
-    >
-      <mat-icon class="text-base">home</mat-icon>
-      Inicio
-    </a>
+    <mat-icon class="text-base">home</mat-icon>
+    Inicio
+  </a>
 
-    <a
-      routerLink="/courses"
-      class="flex items-center gap-2 hover:!text-orange-400 transition"
-      (click)="toggleMobile()"
-    >
-      <mat-icon class="text-base">menu_book</mat-icon>
-      Cursos
-    </a>
+  <!-- Cursos -->
+  <a
+    routerLink="/courses"
+    class="flex items-center gap-2 hover:!text-orange-400 transition"
+    (click)="toggleMobile()"
+  >
+    <mat-icon class="text-base">menu_book</mat-icon>
+    Cursos
+  </a>
 
-    <!-- <a
-      routerLink="/profile"
-      class="flex items-center gap-2 hover:!text-orange-400 transition"
-      (click)="toggleMobile()"
-    >
-      <mat-icon class="text-base">account_circle</mat-icon>
-      Perfil
-    </a> -->
+  <!-- Si NO hay sesión: Ingresar -->
+  @if (!usuario) {
+  <a
+    routerLink="/login"
+    class="flex items-center gap-2 hover:!text-orange-400 transition"
+    (click)="toggleMobile()"
+  >
+    <mat-icon class="text-base">login</mat-icon>
+    Ingresar
+  </a>
+  }
 
-    <a
-      routerLink="/login"
-      class="flex items-center gap-2 hover:!text-orange-400 transition"
-      (click)="toggleMobile()"
-    >
-      <mat-icon class="text-base">login</mat-icon>
-      Ingresar
-    </a>
-  </nav>
+  <!-- Si hay sesión: info + opciones de usuario -->
+  @if (usuario) {
+  <div class="h-px bg-slate-700 my-1"></div>
+
+  <div class="flex items-center gap-2 text-xs text-slate-300">
+    <mat-icon class="text-base text-orange-400">account_circle</mat-icon>
+    {{ usuario.nombre }}
+  </div>
+
+  <a
+    routerLink="/profile"
+    class="flex items-center gap-2 hover:!text-orange-400 transition"
+    (click)="toggleMobile()"
+  >
+    <mat-icon class="text-base">person</mat-icon>
+    Mi perfil
+  </a>
+
+  <a
+    routerLink="/courses"
+    class="flex items-center gap-2 hover:!text-orange-400 transition"
+    (click)="toggleMobile()"
+  >
+    <mat-icon class="text-base">school</mat-icon>
+    Mis cursos
+  </a>
+
+  <button
+    class="flex items-center gap-2 text-left hover:!text-orange-400 transition mt-1"
+    (click)="logout(); toggleMobile()"
+  >
+    <mat-icon class="text-base">logout</mat-icon>
+    Cerrar sesión
+  </button>
+  }
+</nav>
 }

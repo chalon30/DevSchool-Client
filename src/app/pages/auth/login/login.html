@@ -1,0 +1,129 @@
+<div
+  class="min-h-[calc(100vh-64px)] flex items-center justify-center 
+         bg-gradient-to-r from-[#b33038] via-[#d04838] to-[#ff7a00] 
+         px-4"
+>
+  <mat-card
+    class="login-card w-full max-w-md rounded-2xl shadow-2xl 
+           bg-[#fff3e9]/90 backdrop-blur-md border border-[#ffb17a] p-8"
+  >
+    <!-- HEADER -->
+    <div class="flex flex-col items-center gap-3 mb-6">
+      <div
+        class="w-16 h-16 rounded-full bg-[#ff9a54]/30 
+               flex items-center justify-center text-[#ff6a00]"
+      >
+        <mat-icon>school</mat-icon>
+      </div>
+
+      <h2 class="text-2xl font-bold text-[#b63c2f] tracking-wide">
+        Iniciar sesión
+      </h2>
+
+      <p class="text-sm text-[#6d4c41] text-center leading-relaxed">
+        Ingresa tus credenciales para continuar aprendiendo con DevSchool
+      </p>
+    </div>
+
+    <!-- FORM -->
+    <form (ngSubmit)="login()" class="flex flex-col gap-5">
+      
+      <!-- CORREO -->
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Correo</mat-label>
+        <input
+          matInput
+          [(ngModel)]="correo"
+          name="correo"
+          type="email"
+          required
+        />
+        <button mat-icon-button matSuffix type="button" class="login-icon-button">
+          <mat-icon>mail</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <!-- CONTRASEÑA -->
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Contraseña</mat-label>
+        <input
+          matInput
+          [(ngModel)]="clave"
+          name="clave"
+          [type]="hidePassword ? 'password' : 'text'"
+          required
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          class="login-icon-button"
+          (click)="hidePassword = !hidePassword"
+        >
+          <mat-icon>
+            {{ hidePassword ? 'visibility_off' : 'visibility' }}
+          </mat-icon>
+        </button>
+      </mat-form-field>
+
+      <!-- OLVIDASTE -->
+      <div class="flex justify-between text-sm">
+        <a
+          class="text-[#b63c2f] hover:underline cursor-pointer"
+          routerLink="/recuperar"
+        >
+          ¿Olvidaste tu contraseña?
+        </a>
+      </div>
+
+      <!-- BOTÓN -->
+      <button
+        mat-raised-button
+        class="w-full py-3 text-lg font-semibold rounded-xl shadow-md
+               bg-[#ff6a00] hover:bg-[#e95f00] active:bg-[#cc5200]
+               text-white transition"
+        type="submit"
+        [disabled]="cargando || exito"
+      >
+        <!-- ESTADO normal -->
+        <ng-container *ngIf="!cargando && !exito">
+          Ingresar
+        </ng-container>
+
+        <!-- ESTADO cargando -->
+        <ng-container *ngIf="cargando && !exito">
+          <div class="flex items-center justify-center gap-3">
+            <mat-progress-spinner
+              diameter="22"
+              mode="indeterminate"
+              class="!text-white"
+            ></mat-progress-spinner>
+            <span>Verificando...</span>
+          </div>
+        </ng-container>
+
+        <!-- ESTADO éxito -->
+        <ng-container *ngIf="exito">
+          <div class="flex items-center justify-center gap-2">
+            <mat-icon class="!text-white !text-xl">check_circle</mat-icon>
+            <span>Inicio exitoso</span>
+          </div>
+        </ng-container>
+      </button>
+
+      <!-- ERROR -->
+      <p *ngIf="error" class="text-[#c62828] text-sm flex items-center gap-1 mt-1">
+        <mat-icon class="!text-base">error_outline</mat-icon>
+        {{ error }}
+      </p>
+
+      <!-- REGISTRO -->
+      <p class="pt-4 text-center text-sm text-[#6d4c41]">
+        ¿Aún no tienes cuenta?
+        <a routerLink="/register" class="text-[#b63c2f] font-semibold hover:underline">
+          Regístrate
+        </a>
+      </p>
+    </form>
+  </mat-card>
+</div>

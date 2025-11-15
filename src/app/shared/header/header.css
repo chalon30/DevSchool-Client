@@ -9,3 +9,6 @@
     display: none !important;
   }
 }
+:host ::ng-deep .user-button {
+  color: #f9fafb !important; /* text-slate-100 */
+}

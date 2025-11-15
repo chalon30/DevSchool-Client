@@ -1,0 +1,40 @@
+/* Alinear contenedor del icono */
+:host ::ng-deep .mat-form-field-suffix {
+  display: flex !important;
+  align-items: center !important;
+  height: 100% !important;
+}
+
+/* Botón del icono */
+:host ::ng-deep .login-icon-button {
+  width: 40px !important;
+  height: 40px !important;
+  margin-right: 4px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Icono dentro del botón */
+:host ::ng-deep .login-icon-button .mat-icon {
+  font-size: 20px !important;
+  line-height: 1 !important;
+}
+
+/* Snackbars */
+.snackbar-success {
+  background: #ff6a00 !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+.snackbar-error {
+  background: #c62828 !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+/* Card override */
+:host ::ng-deep .login-card {
+  border-radius: 1rem !important;
+}
