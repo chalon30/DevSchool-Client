@@ -10,6 +10,7 @@ import { Footer } from './shared/footer/footer';
   imports: [
     RouterOutlet,
     Header,
+    Footer
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
