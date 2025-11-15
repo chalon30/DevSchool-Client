@@ -1,0 +1,11 @@
+/* Mostrar el menú hamburguesa en móvil */
+.menu-toggle {
+  display: inline-flex;
+}
+
+/* Ocultar el menú hamburguesa en desktop */
+@media (min-width: 768px) {
+  .menu-toggle {
+    display: none !important;
+  }
+}

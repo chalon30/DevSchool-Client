@@ -35,10 +35,10 @@
     </a>
   </nav>
 
-  <!-- Botón menú móvil -->
+  <!-- Menú móvil (hamburguesa) -->
   <button
     mat-icon-button
-    class="md:hidden"
+    class="menu-toggle flex items-center justify-center"
     (click)="toggleMobile()"
     aria-label="Abrir menú de navegación"
   >
@@ -47,43 +47,44 @@
 </mat-toolbar>
 
 <!-- Menú móvil desplegable -->
-<nav
-  *ngIf="mobileOpen"
-  class="md:hidden !bg-stone-900 !text-slate-50 px-4 pb-4 flex flex-col gap-3 text-sm font-medium shadow-lg"
->
-  <a
-    routerLink="/home"
-    class="flex items-center gap-2 hover:!text-orange-400 transition"
-    (click)="toggleMobile()"
+@if (mobileOpen) {
+  <nav
+    class="md:hidden !bg-stone-900 !text-slate-50 px-4 pb-4 flex flex-col gap-3 text-sm font-medium shadow-lg"
   >
-    <mat-icon class="text-base">home</mat-icon>
-    Inicio
-  </a>
+    <a
+      routerLink="/home"
+      class="flex items-center gap-2 hover:!text-orange-400 transition"
+      (click)="toggleMobile()"
+    >
+      <mat-icon class="text-base">home</mat-icon>
+      Inicio
+    </a>
 
-  <a
-    routerLink="/courses"
-    class="flex items-center gap-2 hover:!text-orange-400 transition"
-    (click)="toggleMobile()"
-  >
-    <mat-icon class="text-base">menu_book</mat-icon>
-    Cursos
-  </a>
+    <a
+      routerLink="/courses"
+      class="flex items-center gap-2 hover:!text-orange-400 transition"
+      (click)="toggleMobile()"
+    >
+      <mat-icon class="text-base">menu_book</mat-icon>
+      Cursos
+    </a>
 
-  <a
-    routerLink="/profile"
-    class="flex items-center gap-2 hover:!text-orange-400 transition"
-    (click)="toggleMobile()"
-  >
-    <mat-icon class="text-base">account_circle</mat-icon>
-    Perfil
-  </a>
+    <a
+      routerLink="/profile"
+      class="flex items-center gap-2 hover:!text-orange-400 transition"
+      (click)="toggleMobile()"
+    >
+      <mat-icon class="text-base">account_circle</mat-icon>
+      Perfil
+    </a>
 
-  <a
-    routerLink="/login"
-    class="flex items-center gap-2 hover:!text-orange-400 transition"
-    (click)="toggleMobile()"
-  >
-    <mat-icon class="text-base">login</mat-icon>
-    Ingresar
-  </a>
-</nav>
+    <a
+      routerLink="/login"
+      class="flex items-center gap-2 hover:!text-orange-400 transition"
+      (click)="toggleMobile()"
+    >
+      <mat-icon class="text-base">login</mat-icon>
+      Ingresar
+    </a>
+  </nav>
+}
