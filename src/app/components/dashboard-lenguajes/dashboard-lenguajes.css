@@ -1,0 +1,13 @@
+:host {
+  display: block;
+}
+
+/* Ajuste visual de las cards */
+:host ::ng-deep .mat-mdc-card {
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+/* Apex legend text un poquito más compacto */
+:host ::ng-deep .apexcharts-legend-text {
+  font-size: 11px;
+}

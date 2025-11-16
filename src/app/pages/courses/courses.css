@@ -1,0 +1,62 @@
+/* ----- CARD DE CURSO (mat-card) ----- */
+:host ::ng-deep .mat-mdc-card.curso-card {
+  background-color: #fffaf5 !important;       /* blanco cálido */
+  border-radius: 1rem !important;
+  border: 1px solid #ff8e15 !important;       /* borde crema */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* ----- CHIP NIVEL (mat-chip) ----- */
+:host ::ng-deep .mat-mdc-standard-chip {
+  background-color: #ffefe1 !important;       /* fondo naranja muy suave */
+  color: #ff6a00 !important;                  /* texto naranja principal */
+  font-weight: 600 !important;
+}
+
+/* Quitar borde raro en algunos temas */
+:host ::ng-deep .mat-mdc-standard-chip .mdc-evolution-chip__cell {
+  border-radius: 999px !important;
+}
+
+/* ----- PROGRESS BAR (mat-progress-bar) ----- */
+/* Color de la barra de progreso */
+:host ::ng-deep .curso-progress-bar .mdc-linear-progress__bar-inner {
+  background-color: #ff6a00 !important;       /* barra naranja */
+}
+
+/* Color del “track” detrás de la barra */
+:host ::ng-deep .curso-progress-bar .mdc-linear-progress__buffer {
+  background-color: #ffe0c7 !important;       /* fondo clarito */
+}
+
+/* Quitar colores grises por defecto */
+:host ::ng-deep .curso-progress-bar .mdc-linear-progress__buffer-bar {
+  background-color: transparent !important;
+}
+
+/* ----- BOTONES (mat-raised-button dentro del card) ----- */
+:host ::ng-deep .curso-card .mat-mdc-raised-button {
+  border-radius: 0.75rem !important;
+  background-color: #ff6a00 !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  box-shadow: 0 6px 14px rgba(255, 106, 0, 0.35) !important;
+}
+
+:host ::ng-deep .curso-card .mat-mdc-raised-button:hover {
+  background-color: #e95f00 !important;
+}
+
+/* ----- SPINNER DE CARGA (mat-progress-spinner) ----- */
+:host ::ng-deep .mat-mdc-progress-spinner circle,
+:host ::ng-deep .mat-mdc-progress-spinner .mdc-circular-progress__indeterminate-circle-graphic {
+  stroke: #ff6a00 !important;                 /* spinner naranja */
+}
+
+/* ----- ÍCONOS en tarjetas (por si el tema los pone muy grises) ----- */
+:host ::ng-deep .curso-card .mat-icon {
+  color: #a1887f;                             /* marrón suave */
+}
+
+/* Pero el icono del chip y otros naranjas específicos los dejamos como están
+   porque ya le pusiste clases Tailwind en el HTML. */

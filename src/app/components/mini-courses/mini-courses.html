@@ -1,0 +1,63 @@
+<div class="mini-wrapper">
+  <!-- HEADER -->
+  <div class="mini-header">
+    <div class="mini-title">
+      <mat-icon class="mini-title-icon">menu_book</mat-icon>
+      <span class="mini-title-text">Cursos disponibles</span>
+      <mat-icon class="mini-title-icon">menu_book</mat-icon>
+    </div>
+
+    <mat-divider class="mini-divider"></mat-divider>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="cargando" class="loading">
+    <mat-progress-spinner diameter="40" mode="indeterminate"></mat-progress-spinner>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="!cargando && error" class="error">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ error }}</span>
+  </div>
+
+  <!-- Grid de cursos -->
+  <div *ngIf="!cargando && !error && cursos.length > 0" class="grid-cursos">
+    <mat-card *ngFor="let curso of cursos" class="card-mini shadow-md">
+      <img
+        *ngIf="curso.imagenUrl"
+        [src]="curso.imagenUrl"
+        class="img-mini"
+        [alt]="curso.titulo"
+      />
+
+      <div class="content-mini">
+        <h3 class="titulo">{{ curso.titulo }}</h3>
+        <p class="desc line-clamp-2">{{ curso.descripcion }}</p>
+
+        <button
+          mat-raised-button
+          class="btn-mini"
+          (click)="verCurso(curso)"
+        >
+          <mat-icon class="btn-icon">play_circle</mat-icon>
+          Ver curso
+        </button>
+      </div>
+    </mat-card>
+  </div>
+
+  <!-- Sin cursos -->
+  <div *ngIf="!cargando && !error && cursos.length === 0" class="sin-cursos">
+    <mat-icon>info</mat-icon>
+    <span>Aún no hay cursos disponibles.</span>
+  </div>
+
+  <!-- Ver todos -->
+  <div class="ver-todos">
+    <button mat-stroked-button class="btn-todos" (click)="verTodos()">
+      <mat-icon class="mr-1">arrow_forward</mat-icon>
+      Ver todos los cursos
+    </button>
+  </div>
+</div>

@@ -1,0 +1,156 @@
+/* Contenedor centrado */
+.mini-wrapper {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 0;
+}
+
+/* Header centrado */
+.mini-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.mini-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.mini-title-icon {
+  color: #ff6a00;
+}
+
+.mini-title-text {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: rgb(235, 235, 235);
+}
+
+/* Chips */
+.mini-chips {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.tag-chip {
+  background-color: #ffefe1 !important;
+  color: #ff6a00 !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+}
+
+.chip-icon {
+  font-size: 14px;
+  margin-right: 4px;
+}
+
+/* Divider */
+.mini-divider {
+  margin-top: 10px;
+}
+
+/* Loading */
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 32px 0;
+}
+
+/* Error */
+.error {
+  background: rgba(255, 230, 230, 0.9);
+  border: 1px solid #ff8a80;
+  color: #b71c1c;
+  padding: 10px 15px;
+  margin: 0 auto 10px;
+  border-radius: 8px;
+  max-width: 360px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+}
+
+/* Sin cursos */
+.sin-cursos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: rgb(109, 76, 65);
+  font-size: 0.9rem;
+  padding: 24px 0;
+}
+
+/* Grid compacta */
+.grid-cursos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 18px;
+}
+
+/* Card pequeña */
+.card-mini {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #ffd2a8;
+}
+
+/* Imagen pequeña */
+.img-mini {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+}
+
+/* Contenido */
+.content-mini {
+  padding: 12px 14px;
+}
+
+.titulo {
+  font-size: 15px;
+  font-weight: bold;
+  color: rgb(78, 52, 46);
+  margin-bottom: 4px;
+}
+
+.desc {
+  font-size: 12px;
+  color: rgb(109, 76, 65);
+  margin-bottom: 10px;
+}
+
+/* Botón pequeño */
+.btn-mini {
+  width: 100%;
+  background: #ff6a00 !important;
+  color: white !important;
+  border-radius: 10px !important;
+  padding: 4px 0 !important;
+  font-size: 12px !important;
+}
+
+.btn-icon {
+  font-size: 16px;
+  margin-right: 4px;
+}
+
+/* "Ver todos" */
+.ver-todos {
+  display: flex;
+  justify-content: center;
+  margin-top: 22px;
+}
+
+.btn-todos {
+  border-color: #ff6a00 !important;
+  color: #ff6a00 !important;
+  border-radius: 12px !important;
+  font-size: 0.9rem !important;
+}

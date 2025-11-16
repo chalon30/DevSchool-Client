@@ -1,0 +1,77 @@
+<div class="p-4 sm:p-8">
+  <!-- FILA DE TARJETAS RESUMEN -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+    <mat-card
+      class="rounded-2xl shadow-md bg-white/95 border border-[#ffdab3] px-4 py-3 flex items-center gap-3"
+    >
+      <mat-icon class="!text-[#ff6a00]">star</mat-icon>
+      <div>
+        <p class="text-xs text-[rgb(109,76,65)]">Lenguaje más popular</p>
+        <p class="text-sm font-semibold text-[rgb(78,52,46)]">
+          {{ topPopular.nombre }} ({{ topPopular.valor }}%)
+        </p>
+      </div>
+    </mat-card>
+
+    <mat-card
+      class="rounded-2xl shadow-md bg-white/95 border border-[#ffdab3] px-4 py-3 flex items-center gap-3"
+    >
+      <mat-icon class="!text-[#ff6a00]">trending_up</mat-icon>
+      <div>
+        <p class="text-xs text-[rgb(109,76,65)]">Mayor demanda laboral</p>
+        <p class="text-sm font-semibold text-[rgb(78,52,46)]">
+          {{ topDemanda.nombre }} ({{ topDemanda.valor }}%)
+        </p>
+      </div>
+    </mat-card>
+
+    <mat-card
+      class="rounded-2xl shadow-md bg-white/95 border border-[#ffdab3] px-4 py-3 flex items-center gap-3"
+    >
+      <mat-icon class="!text-[#ff6a00]">code</mat-icon>
+      <div>
+        <p class="text-xs text-[rgb(109,76,65)]">Enfoque típico</p>
+        <p class="text-sm font-semibold text-[rgb(78,52,46)]">
+          Frontend, backend y ciencia de datos
+        </p>
+      </div>
+    </mat-card>
+  </div>
+
+  <!-- GRID DE GRÁFICOS -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- BAR CHART -->
+    <mat-card
+      class="rounded-2xl shadow-md bg-white/95 border border-[#ffdab3] p-4"
+    >
+      <apx-chart
+        [series]="chartOptionsBar.series"
+        [chart]="chartOptionsBar.chart"
+        [xaxis]="chartOptionsBar.xaxis"
+        [yaxis]="chartOptionsBar.yaxis"
+        [dataLabels]="chartOptionsBar.dataLabels"
+        [plotOptions]="chartOptionsBar.plotOptions"
+        [stroke]="chartOptionsBar.stroke"
+        [fill]="chartOptionsBar.fill"
+        [legend]="chartOptionsBar.legend"
+        [tooltip]="chartOptionsBar.tooltip"
+        [title]="chartOptionsBar.title"
+      ></apx-chart>
+    </mat-card>
+
+    <!-- RADIAL CHART -->
+    <mat-card
+      class="rounded-2xl shadow-md bg-white/95 border border-[#ffdab3] p-4"
+    >
+      <apx-chart
+        [series]="chartOptionsRadial.series"
+        [chart]="chartOptionsRadial.chart"
+        [labels]="chartOptionsRadial.labels"
+        [plotOptions]="chartOptionsRadial.plotOptions"
+        [colors]="chartOptionsRadial.colors"
+        [legend]="chartOptionsRadial.legend"
+        [title]="chartOptionsRadial.title"
+      ></apx-chart>
+    </mat-card>
+  </div>
+</div>
