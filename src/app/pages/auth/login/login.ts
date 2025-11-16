@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -51,6 +51,7 @@ export class Login {
     private authService: AuthService,
     private usuarioService: UsuarioService,
     private router: Router,
+    private route: ActivatedRoute, // 👈 para leer returnUrl
     private snackBar: MatSnackBar
   ) {}
 
@@ -70,7 +71,6 @@ export class Login {
         this.usuarioService.buscarPorCorreo(respuesta.correo).subscribe({
           next: (usuarioEncontrado: Usuario | null) => {
             const usuarioSesion: any = {
-              // si no se encuentra, al menos que tenga algo
               id: usuarioEncontrado?.id,
               nombre: usuarioEncontrado?.nombre ?? respuesta.correo,
               correo: respuesta.correo,
@@ -79,18 +79,29 @@ export class Login {
             };
 
             // 2. Guardar usuario + token en localStorage
-            this.authService.guardarUsuarioConToken(usuarioSesion, respuesta.token);
+            this.authService.guardarUsuarioConToken(
+              usuarioSesion,
+              respuesta.token
+            );
 
             this.cargando = false;
             this.exito = true;
 
-            // 3. Mostrar feedback + redirigir
+            // 3. Mostrar feedback
             setTimeout(() => {
-              this.mostrarSnackBar('Sesión iniciada correctamente', 'snackbar-success', 'bottom');
+              this.mostrarSnackBar(
+                'Sesión iniciada correctamente',
+                'snackbar-success',
+                'bottom'
+              );
             }, 1300);
 
+            // 4. Redirigir a returnUrl o /home
             setTimeout(() => {
-              this.router.navigate(['/home']).then(() => {
+              const returnUrl =
+                this.route.snapshot.queryParamMap.get('returnUrl') || '/home';
+
+              this.router.navigate([returnUrl]).then(() => {
                 window.location.reload();
               });
             }, 2500);
@@ -104,17 +115,27 @@ export class Login {
               esAdmin: respuesta.esAdmin,
             };
 
-            this.authService.guardarUsuarioConToken(usuarioSesion, respuesta.token);
+            this.authService.guardarUsuarioConToken(
+              usuarioSesion,
+              respuesta.token
+            );
 
             this.cargando = false;
             this.exito = true;
 
             setTimeout(() => {
-              this.mostrarSnackBar('Sesión iniciada (sin nombre)', 'snackbar-success', 'bottom');
+              this.mostrarSnackBar(
+                'Sesión iniciada (sin nombre)',
+                'snackbar-success',
+                'bottom'
+              );
             }, 1300);
 
             setTimeout(() => {
-              this.router.navigate(['/home']).then(() => {
+              const returnUrl =
+                this.route.snapshot.queryParamMap.get('returnUrl') || '/home';
+
+              this.router.navigate([returnUrl]).then(() => {
                 window.location.reload();
               });
             }, 2500);
@@ -135,7 +156,11 @@ export class Login {
     });
   }
 
-  private mostrarSnackBar(mensaje: string, panelClass: string, position: 'top' | 'bottom' = 'top') {
+  private mostrarSnackBar(
+    mensaje: string,
+    panelClass: string,
+    position: 'top' | 'bottom' = 'top'
+  ) {
     this.snackBar.open(mensaje, 'Cerrar', {
       duration: 4000,
       horizontalPosition: 'center',

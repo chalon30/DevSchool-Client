@@ -1,6 +1,4 @@
-<div
-  class="relative min-h-[calc(100vh-64px)] px-4 sm:px-8 py-10 overflow-hidden"
->
+<div class="relative min-h-[calc(100vh-64px)] px-4 sm:px-8 py-10 overflow-hidden">
   <!-- Fondo con blur -->
   <div
     class="absolute inset-0 bg-cover bg-center bg-fixed"
@@ -16,7 +14,6 @@
 
   <!-- CONTENIDO REAL -->
   <div class="relative max-w-6xl mx-auto">
-
     <!-- Título + subtítulo -->
     <div class="mb-8 text-white drop-shadow-lg">
       <h1 class="text-2xl sm:text-3xl font-extrabold mb-2 flex items-center gap-2">
@@ -40,22 +37,16 @@
     <!-- Error -->
     <div
       *ngIf="!cargando && error"
-      class="bg-red-900/40 border border-red-700 text-red-200
-             px-4 py-3 rounded-xl max-w-xl mx-auto mb-6 flex items-center gap-2 backdrop-blur-sm"
+      class="bg-red-900/40 border border-red-700 text-red-200 px-4 py-3 rounded-xl max-w-xl mx-auto mb-6 flex items-center gap-2 backdrop-blur-sm"
     >
       <mat-icon class="!text-red-300">error_outline</mat-icon>
       <span class="text-sm">{{ error }}</span>
     </div>
 
     <!-- Sin cursos -->
-    <div
-      *ngIf="!cargando && !error && cursos.length === 0"
-      class="text-center text-gray-200 py-12"
-    >
+    <div *ngIf="!cargando && !error && cursos.length === 0" class="text-center text-gray-200 py-12">
       <mat-icon class="!text-4xl !mb-2 text-gray-300">info</mat-icon>
-      <p class="text-sm">
-        Aún no hay cursos disponibles. Vuelve más tarde.
-      </p>
+      <p class="text-sm">Aún no hay cursos disponibles. Vuelve más tarde.</p>
     </div>
 
     <!-- GRID -->
@@ -65,26 +56,18 @@
     >
       <mat-card
         *ngFor="let curso of cursos"
-        class="curso-card rounded-2xl shadow-xl bg-white/95 border border-[#ffdab3]
-               text-[rgb(78,52,46)] flex flex-col justify-between overflow-hidden backdrop-blur-sm"
+        class="curso-card rounded-2xl shadow-xl bg-white/95 border border-[#ffdab3] text-[rgb(78,52,46)] flex flex-col justify-between overflow-hidden backdrop-blur-sm"
       >
         <!-- Imagen del curso -->
         <ng-container *ngIf="curso.imagenUrl; else sinImagen">
-          <img
-            [src]="curso.imagenUrl"
-            [alt]="curso.titulo"
-            class="w-full h-40 object-cover"
-          />
+          <img [src]="curso.imagenUrl" [alt]="curso.titulo" class="w-full h-40 object-cover" />
         </ng-container>
 
         <ng-template #sinImagen>
           <div
-            class="w-full h-40 bg-[#ffe0c7] flex items-center justify-center 
-                   text-[rgb(161,136,127)] text-xs uppercase tracking-wide"
+            class="w-full h-40 bg-[#ffe0c7] flex items-center justify-center text-[rgb(161,136,127)] text-xs uppercase tracking-wide"
           >
-            <mat-icon class="mr-2 !text-[rgb(188,170,164)]">
-              image_not_supported
-            </mat-icon>
+            <mat-icon class="mr-2 !text-[rgb(188,170,164)]"> image_not_supported </mat-icon>
             Sin imagen
           </div>
         </ng-template>
@@ -94,17 +77,13 @@
           <!-- Nivel + lecciones -->
           <div class="flex items-center justify-between text-xs text-[rgb(141,110,99)] mb-1">
             <mat-chip-set>
-              <mat-chip
-                class="!bg-[#ffefe1] !text-[rgb(255,106,0)] !text-[11px] !font-semibold"
-              >
+              <mat-chip class="!bg-[#ffefe1] !text-[rgb(255,106,0)] !text-[11px] !font-semibold">
                 {{ curso.nivel }}
               </mat-chip>
             </mat-chip-set>
 
             <div class="flex items-center gap-1">
-              <mat-icon class="!text-xs !text-[rgb(161,136,127)]">
-                play_circle
-              </mat-icon>
+              <mat-icon class="!text-xs !text-[rgb(161,136,127)]"> play_circle </mat-icon>
               <span>{{ curso.lecciones || 0 }} lecciones</span>
             </div>
           </div>
@@ -135,9 +114,8 @@
             <!-- Botón -->
             <button
               mat-raised-button
-              class="w-full mt-3 !rounded-xl bg-[#ff6a00] hover:bg-[#e95f00] 
-                     text-white font-semibold py-2"
-              (click)="irAlCurso(curso)"
+              class="w-full mt-3 !rounded-xl bg-[#ff6a00] hover:bg-[#e95f00] text-white font-semibold py-2"
+              (click)="onClickCurso(curso)"
             >
               {{ getEtiquetaBoton(curso) }}
             </button>

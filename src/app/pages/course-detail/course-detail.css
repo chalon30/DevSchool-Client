@@ -1,0 +1,31 @@
+.course-stepper .mat-horizontal-stepper-header-container {
+  background-color: transparent;
+}
+
+/* Etiquetas del stepper más legibles */
+.course-stepper .mat-step-label {
+  color: #e5e7eb !important;
+  font-size: 11px;
+}
+
+.course-stepper .mat-step-icon {
+  background-color: rgba(255, 191, 120, 0.15);
+  color: #ffbf78;
+}
+
+.course-stepper .mat-step-icon-selected {
+  background-color: #ff6a00 !important;
+  color: #ffffff !important;
+}
+
+.course-stepper .mat-step-icon-state-done {
+  background-color: #16a34a !important;
+  color: #ffffff !important;
+}
+
+/* Chips intro */
+.chip-intro {
+  background-color: rgba(255, 191, 120, 0.16) !important;
+  color: #ffe4c4 !important;
+  font-size: 11px !important;
+}
