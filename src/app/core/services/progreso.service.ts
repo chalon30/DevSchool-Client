@@ -3,10 +3,17 @@ import { HttpClient } from '@angular/common/http';
 import { appsettings } from '../../Settings/appsettings';
 import { Observable, BehaviorSubject } from 'rxjs';
 
+// Debe reflejar tu ProgresoCursoDTO de backend
 export interface ProgresoCurso {
   cursoId: number;
-  porcentaje: number;     // ajusta el nombre si tu DTO usa otro campo
-  usuarioId?: number;     // opcional, por si tu backend lo devuelve
+  usuarioId: number;
+  porcentaje: number;
+  leccionesCompletadas: number;
+  totalLecciones: number;
+  ultimaLeccionId: number | null;
+  ultimaLeccionTitulo: string | null;
+  cursoCompletado: boolean;
+  leccionesCompletadasIds: number[];
 }
 
 export interface MarcarLeccionCompletadaRequest {
@@ -34,6 +41,13 @@ export class ProgresoService {
   /** GET /api/progreso/usuario/{usuarioId}  */
   getProgresoPorUsuario(usuarioId: number): Observable<ProgresoCurso[]> {
     return this.http.get<ProgresoCurso[]>(`${this.apiUrl}/usuario/${usuarioId}`);
+  }
+
+  /** GET /api/progreso/{cursoId}?usuarioId=XX */
+  getProgresoCurso(cursoId: number, usuarioId: number): Observable<ProgresoCurso> {
+    return this.http.get<ProgresoCurso>(`${this.apiUrl}/${cursoId}`, {
+      params: { usuarioId: usuarioId.toString() },
+    });
   }
 
   /** POST /api/progreso/leccion-completada */
@@ -69,7 +83,7 @@ export class ProgresoService {
   }
 
   /**
-   * Opcional: obtener el porcentaje de un curso concreto en este momento.
+   * Obtener el porcentaje de un curso concreto en este momento.
    */
   obtenerProgresoCursoLocal(cursoId: number): number {
     return this.progresoMap$.value[cursoId] ?? 0;

@@ -1,5 +1,5 @@
-// src/app/pages/course-detail/course-detail.ts
-import { Component, OnInit } from '@angular/core';
+// ... imports que ya tienes ...
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -21,18 +21,19 @@ import {
   Opcion,
 } from '../../core/model/course.model';
 
-// 🔹 Auth + Progreso
 import { AuthService } from '../../core/services/auth.service';
 import {
   ProgresoService,
   ProgresoCurso,
 } from '../../core/services/progreso.service';
 
-// Material
+import {
+  MatStepperModule,
+  MatStepper,
+} from '@angular/material/stepper';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatStepperModule } from '@angular/material/stepper';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDividerModule } from '@angular/material/divider';
@@ -67,23 +68,22 @@ interface LeccionLinea {
   ],
 })
 export class CourseDetail implements OnInit {
+  @ViewChild(MatStepper) stepper!: MatStepper;
+
   curso: Curso | null = null;
 
   cargando = true;
   error = '';
 
-  // Lecciones aplanadas (1,2,3,...)
-  leccionesLineales: LeccionLinea[] = [];
+  indiceStepper: number = 0;
 
-  // Stepper
+  leccionesLineales: LeccionLinea[] = [];
   stepForms: FormGroup[] = [];
 
-  // respuestasUsuario[preguntaId] = opcionId
   respuestasUsuario: { [preguntaId: number]: number } = {};
 
-  // 🔹 Usuario + progreso
   usuarioActual: any = null;
-  progresoCurso?: ProgresoCurso;
+  progresoCurso: ProgresoCurso | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -96,15 +96,14 @@ export class CourseDetail implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // 1) Verificar usuario logueado
     this.usuarioActual = this.authService.getUsuarioActual();
     if (!this.usuarioActual) {
-      const returnUrl = this.router.url || `/courses/${this.route.snapshot.paramMap.get('id')}`;
+      const returnUrl =
+        this.router.url || `/courses/${this.route.snapshot.paramMap.get('id')}`;
       this.router.navigate(['/login'], { queryParams: { returnUrl } });
       return;
     }
 
-    // 2) Cargar curso
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (!id) {
       this.error = 'Curso no encontrado.';
@@ -115,14 +114,31 @@ export class CourseDetail implements OnInit {
     this.courseService.getCurso(id).subscribe({
       next: (curso) => {
         this.curso = curso;
-        this.cargando = false;
         this.inicializarLeccionesLineales();
+        this.cargando = false;
+        this.cargarProgresoCurso();
       },
       error: () => {
         this.error = 'No se pudo cargar el curso.';
         this.cargando = false;
       },
     });
+  }
+
+  private cargarProgresoCurso() {
+    if (!this.curso || !this.usuarioActual?.id) return;
+
+    this.progresoService
+      .getProgresoCurso(this.curso.id, this.usuarioActual.id)
+      .subscribe({
+        next: (progreso) => {
+          this.progresoCurso = progreso;
+          this.aplicarProgresoEnStepper();
+        },
+        error: () => {
+          // sin progreso inicial, no pasa nada
+        },
+      });
   }
 
   private inicializarLeccionesLineales() {
@@ -142,14 +158,12 @@ export class CourseDetail implements OnInit {
           });
       });
 
-    // Crear un FormGroup por lección para el stepper linear
     this.stepForms = this.leccionesLineales.map(() =>
       this.fb.group({
-        done: [false, Validators.requiredTrue], // tiene que ser true para avanzar
+        done: [false, Validators.requiredTrue],
       })
     );
 
-    // Primer paso lo marcamos como "no requerido" al inicio (para poder entrar)
     if (this.stepForms[0]) {
       this.stepForms[0].get('done')?.clearValidators();
       this.stepForms[0].get('done')?.updateValueAndValidity({
@@ -158,7 +172,37 @@ export class CourseDetail implements OnInit {
     }
   }
 
-  // Video embebido de YouTube
+  private aplicarProgresoEnStepper() {
+    if (!this.progresoCurso || !this.leccionesLineales.length) return;
+
+    const idsCompletadas = this.progresoCurso.leccionesCompletadasIds || [];
+
+    this.leccionesLineales.forEach((ll, idx) => {
+      const ctrl = this.stepForms[idx]?.get('done');
+      if (!ctrl) return;
+
+      if (idsCompletadas.includes(ll.leccion.id)) {
+        ctrl.setValue(true, { emitEvent: false });
+      }
+    });
+
+    let initialIndex = 0;
+    if (this.progresoCurso.ultimaLeccionId) {
+      const found = this.leccionesLineales.find(
+        (ll) => ll.leccion.id === this.progresoCurso!.ultimaLeccionId
+      );
+      if (found) {
+        initialIndex = found.index;
+      }
+    }
+
+    setTimeout(() => {
+      if (this.stepper) {
+        this.stepper.selectedIndex = initialIndex;
+      }
+    }, 0);
+  }
+
   getVideoUrl(leccion: Leccion): SafeResourceUrl | null {
     if (!leccion.videoUrl) return null;
 
@@ -189,20 +233,16 @@ export class CourseDetail implements OnInit {
     const tienePreguntas = leccion.preguntas && leccion.preguntas.length > 0;
     if (!tienePreguntas) return true;
 
-    // Todas las preguntas deben ser correctas
     return leccion.preguntas.every((p) => this.esCorrecta(p) === true);
   }
 
-  marcarLeccionCompleta(idx: number, stepper: any) {
+  marcarLeccionCompleta(idx: number, stepper: MatStepper) {
     const { leccion } = this.leccionesLineales[idx];
 
-    // 1) Validar preguntas
     if (!this.puedeMarcarCompletada(leccion)) return;
 
-    // 2) Marcar done=true en este paso (para el stepper)
     this.stepForms[idx].get('done')?.setValue(true);
 
-    // 3) Activar validación en el siguiente paso
     if (this.stepForms[idx + 1]) {
       this.stepForms[idx + 1]
         .get('done')
@@ -212,12 +252,10 @@ export class CourseDetail implements OnInit {
         ?.updateValueAndValidity({ emitEvent: false });
     }
 
-    // 4) Avanzar stepper
     if (stepper && stepper.selectedIndex < this.leccionesLineales.length - 1) {
       stepper.next();
     }
 
-    // 5) 🔹 Notificar al backend que la lección se completó
     if (this.curso && this.usuarioActual?.id) {
       const payload = {
         usuarioId: this.usuarioActual.id,
@@ -228,8 +266,6 @@ export class CourseDetail implements OnInit {
       this.progresoService.marcarLeccionCompletada(payload).subscribe({
         next: (progreso) => {
           this.progresoCurso = progreso;
-          this.progresoService.actualizarProgresoLocal(progreso);
-          // opcional: console.log('Progreso actualizado', progreso);
         },
         error: (err) => {
           console.error('Error marcando lección completada', err);
@@ -239,11 +275,28 @@ export class CourseDetail implements OnInit {
   }
 
   getProgresoCurso(): number {
-    if (!this.stepForms.length) return 0;
+    if (this.progresoCurso) {
+      return this.progresoCurso.porcentaje;
+    }
 
+    if (!this.stepForms.length) return 0;
     const completados = this.stepForms.filter(
       (fg) => fg.get('done')?.value === true
     ).length;
     return Math.round((completados / this.stepForms.length) * 100);
   }
+
+  // 🔥 NUEVO: saber si el curso está completado
+  cursoCompletado(): boolean {
+  if (this.progresoCurso) {
+    return this.progresoCurso.cursoCompletado || this.progresoCurso.porcentaje >= 100;
+  }
+  return this.getProgresoCurso() >= 100;
+}
+
+finalizarCurso(): void {
+  this.router.navigate(['/courses']);
+}
+
+
 }

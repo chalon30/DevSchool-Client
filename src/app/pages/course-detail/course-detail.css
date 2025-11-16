@@ -1,31 +1,324 @@
-.course-stepper .mat-horizontal-stepper-header-container {
-  background-color: transparent;
+/* =========================================================
+   FONDO / BASE — PALETA SUNSET
+   ========================================================= */
+.course-detail-wrapper {
+  position: relative;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #f9fafb;
 }
 
-/* Etiquetas del stepper más legibles */
-.course-stepper .mat-step-label {
-  color: #e5e7eb !important;
-  font-size: 11px;
+.course-detail-bg {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(180deg, #020617 0%, #0b1120 40%, #111827 100%);
+  z-index: -2;
 }
 
-.course-stepper .mat-step-icon {
-  background-color: rgba(255, 191, 120, 0.15);
-  color: #ffbf78;
+.course-detail-overlay {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 10% 10%, rgba(251, 146, 60, 0.45), transparent 55%),
+    radial-gradient(circle at 90% 20%, rgba(244, 114, 182, 0.35), transparent 55%),
+    radial-gradient(circle at 50% 90%, rgba(129, 140, 248, 0.35), transparent 55%);
+  opacity: 0.9;
+  z-index: -1;
 }
 
-.course-stepper .mat-step-icon-selected {
-  background-color: #ff6a00 !important;
+.course-detail-content {
+  position: relative;
+  z-index: 1;
+  color: #f1f5f9;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+.course-header {
+  background: rgba(15, 23, 42, 0.92);
+  border-color: rgba(30, 64, 175, 0.55);
+}
+
+.course-title {
+  color: #fed7aa;
+}
+
+.course-title-icon {
+  color: #fdba74;
+}
+
+.course-description {
+  color: #e2e8f0;
+}
+
+/* =========================================================
+   PROGRESO
+   ========================================================= */
+.course-progress-card {
+  background: rgba(15, 23, 42, 0.95);
+  border-color: rgba(30, 64, 175, 0.6);
+}
+
+.course-progress-label,
+.course-progress-text {
+  color: #fed7aa;
+}
+
+.course-detail-wrapper
+  .mat-mdc-progress-bar
+  .mdc-linear-progress__bar-inner {
+  background: linear-gradient(90deg, #fb923c, #fb7185, #a855f7) !important;
+}
+
+/* =========================================================
+   STEPPER
+   ========================================================= */
+.course-stepper {
+  background: rgba(15, 23, 42, 0.85);
+  border-radius: 1.5rem;
+}
+
+.course-step-label {
+  color: #f97316;
+}
+
+.course-detail-wrapper .mat-horizontal-stepper-header {
+  color: #f1f5f9;
+}
+
+/* =========================================================
+   LECCIÓN / VIDEO / RESUMEN
+   ========================================================= */
+.lesson-card {
+  background: rgba(15, 23, 42, 0.95);
+  border-color: rgba(31, 41, 55, 0.9);
+}
+
+.lesson-video-wrapper {
+  background: #020617;
+}
+
+.lesson-title {
+  color: #fed7aa;
+}
+
+.lesson-pill {
+  background: linear-gradient(90deg, #fb923c, #fb7185, #a855f7);
+  color: #0f172a;
+}
+
+.lesson-intro-title {
+  color: #fed7aa;
+}
+
+.lesson-text {
+  color: #e2e8f0;
+}
+
+/* =========================================================
+   CHIPS SUNSET
+   ========================================================= */
+.sunset-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid rgba(251, 146, 60, 0.7);
+  background: rgba(251, 146, 60, 0.18);
+  color: #ffedd5;
+}
+
+.sunset-chip-alt1 {
+  border-color: rgba(244, 114, 182, 0.7);
+  background: rgba(244, 114, 182, 0.18);
+  color: #ffe4f0;
+}
+
+.sunset-chip-alt2 {
+  border-color: rgba(129, 140, 248, 0.7);
+  background: rgba(129, 140, 248, 0.18);
+  color: #e0e7ff;
+}
+
+/* =========================================================
+   QUIZ
+   ========================================================= */
+.quiz-title-icon {
+  color: #fdba74;
+}
+
+.quiz-question {
+  border-color: rgba(56, 56, 56, 0.55);
+  background: rgba(15, 23, 42, 0.88);
+}
+
+.quiz-question-text {
+  color: #ffffff;
+}
+
+/* Radio button */
+.course-detail-wrapper .mat-radio-button .mat-radio-label-content {
   color: #ffffff !important;
 }
 
-.course-stepper .mat-step-icon-state-done {
-  background-color: #16a34a !important;
+/* Correcto */
+.quiz-feedback-correct {
+  background: rgba(22, 163, 74, 0.18);
+  color: #bbf7d0;
+}
+
+.quiz-feedback-icon-correct {
+  color: #4ade80;
+}
+
+/* Incorrecto */
+.quiz-feedback-incorrect {
+  background: rgba(248, 113, 113, 0.18);
+  color: #fecaca;
+}
+
+.quiz-feedback-icon-incorrect {
+  color: #fca5a5;
+}
+
+.quiz-no-questions {
+  color: #f1f5f9;
+}
+
+/* =========================================================
+   ESTADOS: LOADING & ERROR
+   ========================================================= */
+.course-loading {
+  background: rgba(15, 23, 42, 0.92);
+}
+
+.course-loading-text {
+  color: #fed7aa;
+}
+
+.course-error {
+  background: rgba(127, 29, 29, 0.75);
+}
+
+.course-error-icon {
+  color: #fecaca;
+}
+
+.course-error-text {
+  color: #fee2e2;
+}
+
+/* =========================================================
+   BOTONES
+   ========================================================= */
+.btn-prev {
+  border-color: rgba(148, 163, 184, 0.8) !important;
+  background: rgba(15, 23, 42, 0.9) !important;
   color: #ffffff !important;
 }
 
-/* Chips intro */
-.chip-intro {
-  background-color: rgba(255, 191, 120, 0.16) !important;
-  color: #ffe4c4 !important;
-  font-size: 11px !important;
+.btn-prev:hover {
+  background: rgba(30, 64, 175, 0.35) !important;
 }
+
+.btn-mark {
+  background: linear-gradient(90deg, #fb923c, #fb7185, #a855f7) !important;
+  color: #0f172a !important;
+}
+
+.btn-next {
+  border-color: rgba(248, 113, 113, 0.8) !important;
+  background: rgba(15, 23, 42, 0.9) !important;
+  color: #ffffff !important;
+}
+
+.btn-finish {
+  background: #22c55e !important;
+  color: #022c22 !important;
+}
+
+/* =========================================================
+   SELECT / MENÚ — *BLANCO PURO* EN OPCIONES
+   ========================================================= */
+
+/* Panel donde aparecen las opciones */
+.course-detail-wrapper .cdk-overlay-pane .mat-mdc-select-panel,
+.course-detail-wrapper .cdk-overlay-pane .mat-mdc-menu-panel {
+  background: rgba(15, 23, 42, 0.98) !important;
+}
+
+/* OPCIONES — color blanco puro siempre */
+.course-detail-wrapper .mat-mdc-option .mdc-list-item__primary-text,
+.course-detail-wrapper .mat-mdc-menu-item .mdc-list-item__primary-text {
+  color: #ffffff !important;
+}
+
+/* Hover */
+.course-detail-wrapper .mat-mdc-option:hover .mdc-list-item__primary-text,
+.course-detail-wrapper .mat-mdc-menu-item:hover .mdc-list-item__primary-text {
+  color: #ffffff !important;
+  background: rgba(251, 146, 60, 0.22) !important;
+}
+
+/* Opción seleccionada */
+.course-detail-wrapper .mat-mdc-option.mdc-list-item--selected .mdc-list-item__primary-text,
+.course-detail-wrapper .mat-mdc-option.mdc-list-item--activated .mdc-list-item__primary-text {
+  color: #ffffff !important;
+}
+
+/* Valor en el select cerrado */
+.course-detail-wrapper .mat-mdc-select-value-text {
+  color: #ffffff !important;
+}
+
+/* Icono flecha select */
+.course-detail-wrapper .mat-mdc-select-arrow svg {
+  fill: #ffffff !important;
+}
+
+/* Badge del icono de feedback */
+.quiz-feedback-icon {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  width: 1.25rem;
+  height: 1.25rem;
+  font-size: 0.9rem !important;
+  line-height: 1 !important;
+
+  border-radius: 9999px;
+  background-color: rgba(15, 23, 42, 0.9);
+}
+
+/* >= 640px (sm) */
+@media (min-width: 640px) {
+  .quiz-feedback-icon {
+    width: 1.4rem;
+    height: 1.4rem;
+    font-size: 1rem !important;
+  }
+}
+
+/* >= 768px (md) */
+@media (min-width: 768px) {
+  .quiz-feedback-icon {
+    width: 1.55rem;
+    height: 1.55rem;
+    font-size: 1.1rem !important;
+  }
+}
+
+/* Colores sunset */
+.quiz-feedback-icon-correct {
+  color: #4ade80;
+}
+
+.quiz-feedback-icon-incorrect {
+  color: #fca5a5;
+}
+

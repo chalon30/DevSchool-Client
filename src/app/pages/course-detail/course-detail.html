@@ -1,233 +1,275 @@
-<div
-  class="relative min-h-[calc(100vh-64px)] px-4 sm:px-8 py-8 overflow-hidden"
->
-  <!-- FONDO -->
-  <div
-    class="absolute inset-0 bg-cover bg-center bg-fixed"
-    style="
-      background-image: url('/fnd3.webp');
-      filter: blur(6px) brightness(0.8);
-      transform: scale(1.05);
-    "
-  ></div>
-  <div class="absolute inset-0 bg-black/40"></div>
+<div class="course-detail-wrapper">
+  <!-- Fondo y overlay -->
+  <div class="course-detail-bg"></div>
+  <div class="course-detail-overlay"></div>
 
   <!-- CONTENIDO -->
-  <div class="relative max-w-6xl mx-auto text-slate-50">
+  <div
+    class="course-detail-content w-full mx-auto flex max-w-6xl flex-col gap-6 px-3 py-4 sm:px-4 sm:py-6 lg:px-8 lg:py-10"
+  >
     <!-- LOADING -->
-    <div *ngIf="cargando" class="flex justify-center py-16">
-      <div class="flex flex-col items-center gap-3 text-white">
-        <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
-        <span class="text-sm">Cargando curso...</span>
-      </div>
+    <div
+      *ngIf="cargando"
+      class="course-loading flex min-h-[40vh] flex-col items-center justify-center gap-4 rounded-2xl px-4"
+    >
+      <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+      <span class="course-loading-text text-sm sm:text-base font-medium tracking-wide">
+        Cargando curso...
+      </span>
     </div>
 
     <!-- ERROR -->
     <div
       *ngIf="!cargando && error"
-      class="bg-red-900/40 border border-red-700 text-red-200
-             px-4 py-3 rounded-xl mb-6 flex items-center gap-2 backdrop-blur-sm"
+      class="course-error flex items-center gap-3 rounded-2xl px-4 py-3 text-xs sm:text-sm md:text-base"
     >
-      <mat-icon class="!text-red-300">error_outline</mat-icon>
-      <span>{{ error }}</span>
+      <mat-icon class="course-error-icon text-base sm:text-lg">error_outline</mat-icon>
+      <span class="course-error-text font-medium">{{ error }}</span>
     </div>
 
     <!-- CURSO -->
     <ng-container *ngIf="!cargando && curso">
       <!-- HEADER -->
-      <div
-        class="mb-8 rounded-3xl border border-slate-700/70 bg-slate-900/70 backdrop-blur-sm shadow-xl overflow-hidden"
-      >
-        <div class="p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-start sm:items-center">
-          <div class="flex-1">
-            <h1 class="text-2xl sm:text-3xl font-extrabold flex items-center gap-2">
-              <mat-icon class="!text-[#ffbf78]">menu_book</mat-icon>
-              {{ curso?.titulo }}
+      <header class="course-header rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-xl border">
+        <div class="flex flex-col gap-5 md:gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <!-- izquierda: título -->
+          <div class="space-y-3 max-w-2xl">
+            <h1
+              class="course-title flex items-center gap-2 sm:gap-3 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold tracking-tight"
+            >
+              <mat-icon class="course-title-icon text-2xl sm:text-3xl md:text-4xl">
+                menu_book
+              </mat-icon>
+              <span class="leading-tight">
+                {{ curso.titulo }}
+              </span>
             </h1>
-            <p class="mt-2 text-sm sm:text-base text-slate-200 max-w-2xl">
-              {{ curso?.descripcion }}
+
+            <p class="course-description text-xs sm:text-sm md:text-base leading-relaxed">
+              {{ curso.descripcion }}
             </p>
           </div>
 
-          <div class="w-full sm:w-64">
-            <span class="text-xs text-slate-300">Progreso del curso</span>
+          <!-- derecha: progreso -->
+          <div
+            class="course-progress-card w-full max-w-xs sm:max-w-sm rounded-2xl p-3 sm:p-4 border"
+          >
+            <span
+              class="course-progress-label block text-[0.65rem] sm:text-xs md:text-sm font-semibold uppercase tracking-[0.15em]"
+            >
+              Progreso del curso
+            </span>
             <mat-progress-bar
-              class="mt-2"
+              class="course-progress-bar mt-3 h-3 rounded-full overflow-hidden w-full"
               mode="determinate"
               [value]="getProgresoCurso()"
             ></mat-progress-bar>
-            <p class="text-right text-xs text-slate-300 mt-1">
+            <p class="course-progress-text mt-2 text-right text-xs sm:text-sm md:text-base">
               {{ getProgresoCurso() }}%
             </p>
           </div>
         </div>
-      </div>
+      </header>
 
       <!-- STEPPER -->
-      <mat-horizontal-stepper
-        *ngIf="leccionesLineales.length > 0"
-        #stepper
-        [linear]="true"
-        class="course-stepper bg-slate-900/60 rounded-3xl border border-slate-700/70 backdrop-blur-sm shadow-xl px-4 sm:px-6 py-4"
-      >
-        <mat-step
-          *ngFor="let item of leccionesLineales; index as i"
-          [stepControl]="stepForms[i]"
+      <div class="w-full overflow-x-auto pb-1">
+        <mat-horizontal-stepper
+          *ngIf="leccionesLineales.length > 0"
+          #stepper
+          [linear]="true"
+          [(selectedIndex)]="indiceStepper"
+          class="course-stepper mt-4 rounded-2xl sm:rounded-3xl p-3 sm:p-4 lg:p-6 min-w-[280px]"
         >
-          <ng-template matStepLabel>
-            <span class="text-xs sm:text-sm">
-              {{ item.modulo.numeroOrden }}.{{ item.leccion.numeroOrden }}
-              {{ item.leccion.titulo }}
-            </span>
-          </ng-template>
-
-          <!-- CONTENIDO DE LA LECCIÓN -->
-          <div class="grid gap-4 lg:grid-cols-[minmax(0,3fr),minmax(0,2fr)]">
-            <!-- Video + texto -->
-            <mat-card
-              class="bg-slate-900/80 border border-slate-700 rounded-2xl shadow-lg overflow-hidden"
-            >
-              <div class="aspect-video bg-black">
-                <iframe
-                  *ngIf="getVideoUrl(item.leccion) as videoUrl"
-                  class="w-full h-full"
-                  [src]="videoUrl"
-                  frameborder="0"
-                  allowfullscreen
-                ></iframe>
-              </div>
-
-              <div class="p-5 space-y-3">
-                <div class="flex items-center justify-between gap-2">
-                  <h2 class="text-lg font-bold text-slate-50">
-                    {{ item.leccion.titulo }}
-                  </h2>
-                  <span
-                    class="text-[10px] rounded-full px-3 py-1 bg-[#ffbf78]/20 text-[#ffbf78] uppercase tracking-wide"
-                  >
-                    M{{ item.modulo.numeroOrden }} · L{{ item.leccion.numeroOrden }}
-                  </span>
-                </div>
-
-                <mat-chip-set>
-                  <mat-chip *ngIf="item.leccion.intro1" class="chip-intro">
-                    {{ item.leccion.intro1 }}
-                  </mat-chip>
-                  <mat-chip *ngIf="item.leccion.intro2" class="chip-intro">
-                    {{ item.leccion.intro2 }}
-                  </mat-chip>
-                  <mat-chip *ngIf="item.leccion.intro3" class="chip-intro">
-                    {{ item.leccion.intro3 }}
-                  </mat-chip>
-                </mat-chip-set>
-
-                <p class="text-sm text-slate-200 leading-relaxed">
-                  {{ item.leccion.contenido }}
-                </p>
-              </div>
-            </mat-card>
-
-            <!-- QUIZ -->
-            <mat-card
-              class="bg-slate-900/80 border border-slate-700 rounded-2xl shadow-lg p-4"
-            >
-              <h3 class="text-sm font-semibold mb-3 flex items-center gap-2">
-                <mat-icon class="!text-[#ffbf78]">quiz</mat-icon>
-                Preguntas rápidas
-              </h3>
-
-              <ng-container *ngIf="item.leccion.preguntas?.length; else sinQuiz">
-                <div
-                  *ngFor="let pregunta of item.leccion.preguntas"
-                  class="mb-4 last:mb-0"
-                >
-                  <p class="text-xs font-medium text-slate-100 mb-2">
-                    {{ pregunta.numeroOrden }}. {{ pregunta.enunciado }}
-                  </p>
-
-                  <mat-radio-group
-                    class="flex flex-col gap-1"
-                    [(ngModel)]="respuestasUsuario[pregunta.id]"
-                  >
-                    <mat-radio-button
-                      *ngFor="let opcion of pregunta.opciones"
-                      [value]="opcion.id"
-                      class="text-xs text-slate-200"
-                    >
-                      {{ opcion.texto }}
-                    </mat-radio-button>
-                  </mat-radio-group>
-
-                  <ng-container [ngSwitch]="esCorrecta(pregunta)">
-                    <p
-                      *ngSwitchCase="true"
-                      class="mt-1 text-[11px] text-green-400 flex items-center gap-1"
-                    >
-                      <mat-icon class="!text-green-400 !text-base">
-                        check_circle
-                      </mat-icon>
-                      ¡Correcto! {{ pregunta.explicacion }}
-                    </p>
-
-                    <p
-                      *ngSwitchCase="false"
-                      class="mt-1 text-[11px] text-red-400 flex items-center gap-1"
-                    >
-                      <mat-icon class="!text-red-400 !text-base">
-                        highlight_off
-                      </mat-icon>
-                      Incorrecto. {{ pregunta.explicacion }}
-                    </p>
-                  </ng-container>
-                </div>
-              </ng-container>
-
-              <ng-template #sinQuiz>
-                <p class="text-xs text-slate-300">
-                  Esta lección no tiene preguntas. Puedes marcarla como completada
-                  cuando termines el video.
-                </p>
-              </ng-template>
-            </mat-card>
-          </div>
-
-          <!-- CONTROLES -->
-          <div class="mt-5 flex flex-col sm:flex-row justify-between gap-3">
-            <button
-              mat-stroked-button
-              color="primary"
-              class="!border-slate-500 !text-slate-200"
-              matStepperPrevious
-              [disabled]="i === 0"
-            >
-              <mat-icon class="mr-1">chevron_left</mat-icon>
-              Anterior
-            </button>
-
-            <div class="flex gap-3 justify-end">
-              <button
-                mat-raised-button
-                class="!rounded-xl bg-[#ff6a00] hover:bg-[#e95f00] text-white text-sm px-4"
-                (click)="marcarLeccionCompleta(i, stepper)"
-                [disabled]="!puedeMarcarCompletada(item.leccion)"
+          <mat-step *ngFor="let item of leccionesLineales; index as i" [stepControl]="stepForms[i]">
+            <ng-template matStepLabel>
+              <span
+                class="course-step-label block text-[0.65rem] sm:text-xs md:text-sm font-semibold tracking-wide text-center"
               >
-                Marcar lección como completada
-              </button>
+                {{ item.modulo.numeroOrden }}.{{ item.leccion.numeroOrden }}
+              </span>
+            </ng-template>
 
+            <!-- CONTENIDO DE LA LECCIÓN -->
+            <div class="lesson-grid flex flex-col gap-4 sm:gap-5">
+              <div
+                class="lesson-card h-full rounded-2xl sm:rounded-3xl border shadow-lg flex flex-col"
+              >
+                <!-- 1. VIDEO -->
+                <div class="lesson-video-wrapper rounded-2xl overflow-hidden">
+                  <div class="aspect-video w-full">
+                    <iframe
+                      *ngIf="getVideoUrl(item.leccion) as videoUrl"
+                      class="lesson-video h-full w-full"
+                      [src]="videoUrl"
+                      frameborder="0"
+                      allowfullscreen
+                    ></iframe>
+                  </div>
+                </div>
+
+                <!-- 2. INTRO / RESUMEN -->
+                <div class="lesson-body p-3 sm:p-4 md:p-5 lg:p-6 space-y-4 sm:space-y-5">
+                  <div class="lesson-header flex flex-wrap items-center justify-between gap-3">
+                    <h2 class="lesson-title text-base sm:text-lg md:text-xl font-semibold">
+                      {{ item.leccion.titulo }}
+                    </h2>
+                    <span
+                      class="lesson-pill inline-flex items-center rounded-full px-3 py-1 text-[0.65rem] sm:text-xs font-semibold uppercase tracking-wide shadow-sm"
+                    >
+                      M{{ item.modulo.numeroOrden }} · L{{ item.leccion.numeroOrden }}
+                    </span>
+                  </div>
+
+                  <section class="lesson-intro space-y-3">
+                    <h3 class="lesson-intro-title text-xs sm:text-sm md:text-base font-semibold">
+                      Resumen de la lección
+                    </h3>
+
+                    <div class="lesson-chips flex flex-wrap gap-2 text-[0.65rem] sm:text-xs">
+                      <span *ngIf="item.leccion.intro1" class="sunset-chip">
+                        {{ item.leccion.intro1 }}
+                      </span>
+                      <span *ngIf="item.leccion.intro2" class="sunset-chip sunset-chip-alt1">
+                        {{ item.leccion.intro2 }}
+                      </span>
+                      <span *ngIf="item.leccion.intro3" class="sunset-chip sunset-chip-alt2">
+                        {{ item.leccion.intro3 }}
+                      </span>
+                    </div>
+
+                    <p class="lesson-text text-xs sm:text-sm md:text-base leading-relaxed">
+                      {{ item.leccion.contenido }}
+                    </p>
+                  </section>
+
+                  <!-- 3. PREGUNTAS -->
+                  <section class="lesson-quiz space-y-3 sm:space-y-4">
+                    <h3
+                      class="quiz-title flex items-center gap-2 text-xs sm:text-sm md:text-base font-semibold"
+                    >
+                      <mat-icon class="quiz-title-icon text-sm sm:text-base md:text-lg">
+                        quiz
+                      </mat-icon>
+                      Preguntas rápidas
+                    </h3>
+
+                    <ng-container *ngIf="item.leccion.preguntas.length; else sinQuiz">
+                      <div
+                        *ngFor="let pregunta of item.leccion.preguntas"
+                        class="quiz-question rounded-2xl border p-3 sm:p-4 space-y-3"
+                      >
+                        <p class="quiz-question-text text-xs sm:text-sm md:text-base font-medium">
+                          {{ pregunta.numeroOrden }}. {{ pregunta.enunciado }}
+                        </p>
+
+                        <mat-radio-group
+                          class="quiz-radio-group flex flex-col gap-1.5 sm:gap-2 text-xs sm:text-sm md:text-base"
+                          [(ngModel)]="respuestasUsuario[pregunta.id]"
+                        >
+                          <mat-radio-button
+                            *ngFor="let opcion of pregunta.opciones"
+                            [value]="opcion.id"
+                            class="quiz-radio-option !text-white [&_.mdc-label]:!text-white [&_.mdc-label]:!opacity-100"
+                          >
+                            {{ opcion.texto }}
+                          </mat-radio-button>
+                        </mat-radio-group>
+
+                        <ng-container [ngSwitch]="esCorrecta(pregunta)">
+  <p
+    *ngSwitchCase="true"
+    class="quiz-feedback quiz-feedback-correct flex items-start gap-2 rounded-xl px-3 py-2 text-[0.7rem] sm:text-xs md:text-sm"
+  >
+    <mat-icon class="quiz-feedback-icon quiz-feedback-icon-correct">
+      check_circle
+    </mat-icon>
+    <span> ¡Correcto! {{ pregunta.explicacion }} </span>
+  </p>
+
+  <p
+    *ngSwitchCase="false"
+    class="quiz-feedback quiz-feedback-incorrect flex items-start gap-2 rounded-xl px-3 py-2 text-[0.7rem] sm:text-xs md:text-sm"
+  >
+    <mat-icon class="quiz-feedback-icon quiz-feedback-icon-incorrect">
+      highlight_off
+    </mat-icon>
+    <span> Incorrecto. {{ pregunta.explicacion }} </span>
+  </p>
+</ng-container>
+
+                      </div>
+                    </ng-container>
+
+                    <ng-template #sinQuiz>
+                      <p class="quiz-no-questions text-xs sm:text-sm md:text-base">
+                        Esta lección no tiene preguntas. Puedes marcarla como completada cuando
+                        termines el video.
+                      </p>
+                    </ng-template>
+                  </section>
+                </div>
+              </div>
+            </div>
+
+            <!-- CONTROLES -->
+            <div
+              class="lesson-controls mt-4 sm:mt-5 flex flex-col gap-3 border-t pt-3 sm:pt-4 sm:flex-row sm:items-center sm:justify-between"
+            >
+              <!-- ANTERIOR -->
               <button
                 mat-stroked-button
-                color="accent"
-                class="!border-slate-500 !text-slate-200"
-                matStepperNext
-                [disabled]="!stepForms[i].valid"
+                color="primary"
+                class="btn-prev inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-xs sm:text-sm md:text-base font-medium"
+                matStepperPrevious
+                [disabled]="i === 0"
               >
-                Siguiente
-                <mat-icon class="ml-1">chevron_right</mat-icon>
+                <mat-icon class="text-sm sm:text-base md:text-lg"> chevron_left </mat-icon>
+                <span>Anterior</span>
               </button>
+
+              <!-- DERECHA: marcar + siguiente / finalizar -->
+              <div
+                class="lesson-controls-right flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end"
+              >
+                <!-- Marcar lección -->
+                <button
+                  mat-raised-button
+                  class="btn-mark rounded-full px-4 py-2 text-xs sm:text-sm md:text-base font-semibold"
+                  (click)="marcarLeccionCompleta(i, stepper)"
+                  [disabled]="!puedeMarcarCompletada(item.leccion)"
+                >
+                  Marcar lección como completada
+                </button>
+
+                <!-- Siguiente -->
+                <button
+                  *ngIf="i < leccionesLineales.length - 1"
+                  mat-stroked-button
+                  color="accent"
+                  class="btn-next inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-xs sm:text-sm md:text-base font-medium"
+                  matStepperNext
+                  [disabled]="!stepForms[i].valid"
+                >
+                  <span>Siguiente</span>
+                  <mat-icon class="text-sm sm:text-base md:text-lg"> chevron_right </mat-icon>
+                </button>
+
+                <!-- Finalizar curso -->
+                <button
+                  *ngIf="i === leccionesLineales.length - 1"
+                  mat-raised-button
+                  class="btn-finish inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-xs sm:text-sm md:text-base font-semibold"
+                  (click)="finalizarCurso()"
+                  [disabled]="!cursoCompletado()"
+                >
+                  <mat-icon class="text-sm sm:text-base md:text-lg"> emoji_events </mat-icon>
+                  <span>Finalizar curso</span>
+                </button>
+              </div>
             </div>
-          </div>
-        </mat-step>
-      </mat-horizontal-stepper>
+          </mat-step>
+        </mat-horizontal-stepper>
+      </div>
     </ng-container>
   </div>
 </div>
