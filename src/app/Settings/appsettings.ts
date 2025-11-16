@@ -1,3 +1,3 @@
 export const appsettings ={
-    apiUrl:"http://localhost:8080/api/"
+    apiUrl:"https://unkingly-uncapitalized-doretta.ngrok-free.dev/api/"
 }
