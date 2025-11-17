@@ -2,7 +2,7 @@
 .mini-wrapper {
   max-width: 960px;
   margin: 0 auto;
-  padding: 24px 0;
+  padding: 24px 16px; /* padding horizontal base */
 }
 
 /* Header centrado */
@@ -99,6 +99,7 @@
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid #ffd2a8;
+  margin: 0 4px; /* separación mínima horizontal */
 }
 
 /* Imagen pequeña */
@@ -153,4 +154,24 @@
   color: #ff6a00 !important;
   border-radius: 12px !important;
   font-size: 0.9rem !important;
+}
+
+/* =========================
+   Media Queries Responsivo
+========================= */
+@media (max-width: 768px) {
+  .mini-wrapper {
+    padding: 24px 20px; /* más espacio horizontal en tablets/móviles */
+  }
+}
+
+@media (max-width: 480px) {
+  .mini-wrapper {
+    padding: 16px 16px; /* espacio seguro en móviles pequeños */
+  }
+
+  .grid-cursos {
+    grid-template-columns: 1fr; /* una columna en móviles */
+    gap: 12px;
+  }
 }
