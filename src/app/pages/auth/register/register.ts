@@ -100,7 +100,7 @@ export class Register {
         this.exito = true;
 
         this.mostrarSnackBar(
-          'Registro exitoso. Verifica tu correo para activar tu cuenta.',
+          'Registro exitoso.',
           'snackbar-success',
           'bottom'
         );
@@ -115,7 +115,7 @@ export class Register {
         if (err?.error?.error === 'El correo ya existe') {
           this.error = 'Este correo ya está registrado.';
         } else if (err?.error?.error?.includes('activación')) {
-          this.error = 'Tu cuenta fue creada pero falta activarla. Revisa tu correo.';
+          this.error = 'Ocurrió un error al registrarte.';
         } else {
           this.error = err?.error?.error || 'Ocurrió un error al registrarte.';
         }
