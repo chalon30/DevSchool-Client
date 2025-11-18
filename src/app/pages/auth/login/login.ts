@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms';
 
 import { AuthService } from '../../../core/services/auth.service';
 import { LoginResponse } from '../../../core/model/LoginResponse';
-import { UsuarioService } from '../../../core/services/usuario.service';
 import { Usuario } from '../../../core/model/Usuario';
 
 // Material
@@ -49,9 +48,8 @@ export class Login {
 
   constructor(
     private authService: AuthService,
-    private usuarioService: UsuarioService,
     private router: Router,
-    private route: ActivatedRoute, // 👈 para leer returnUrl
+    private route: ActivatedRoute,
     private snackBar: MatSnackBar
   ) {}
 
@@ -67,80 +65,40 @@ export class Login {
 
     this.authService.login(this.correo, this.clave).subscribe({
       next: (respuesta: LoginResponse) => {
-        // 1. Obtener el usuario completo por correo
-        this.usuarioService.buscarPorCorreo(respuesta.correo).subscribe({
-          next: (usuarioEncontrado: Usuario | null) => {
-            const usuarioSesion: any = {
-              id: usuarioEncontrado?.id,
-              nombre: usuarioEncontrado?.nombre ?? respuesta.correo,
-              correo: respuesta.correo,
-              rol: respuesta.rol,
-              esAdmin: respuesta.esAdmin,
-            };
+        // ⬅ Directamente usamos lo que devuelve el backend
+        const usuarioSesion: any = {
+          id: respuesta.id,
+          nombre: respuesta.nombre,
+          apellidos: respuesta.apellidos,
+          correo: respuesta.correo,
+          rol: respuesta.rol,
+          esAdmin: respuesta.esAdmin,
+        };
 
-            // 2. Guardar usuario + token en localStorage
-            this.authService.guardarUsuarioConToken(
-              usuarioSesion,
-              respuesta.token
-            );
+        // Guardar usuario + token en LocalStorage
+        this.authService.guardarUsuarioConToken(usuarioSesion, respuesta.token);
 
-            this.cargando = false;
-            this.exito = true;
+        this.cargando = false;
+        this.exito = true;
 
-            // 3. Mostrar feedback
-            setTimeout(() => {
-              this.mostrarSnackBar(
-                'Sesión iniciada correctamente',
-                'snackbar-success',
-                'bottom'
-              );
-            }, 1300);
+        // Feedback al usuario
+        setTimeout(() => {
+          this.mostrarSnackBar(
+            'Sesión iniciada correctamente',
+            'snackbar-success',
+            'bottom'
+          );
+        }, 1300);
 
-            // 4. Redirigir a returnUrl o /home
-            setTimeout(() => {
-              const returnUrl =
-                this.route.snapshot.queryParamMap.get('returnUrl') || '/home';
+        // Redirigir a returnUrl o /home
+        setTimeout(() => {
+          const returnUrl =
+            this.route.snapshot.queryParamMap.get('returnUrl') || '/home';
 
-              this.router.navigate([returnUrl]).then(() => {
-                window.location.reload();
-              });
-            }, 2500);
-          },
-          error: () => {
-            // Si falla la búsqueda del usuario, igual logueamos con correo
-            const usuarioSesion: any = {
-              nombre: respuesta.correo,
-              correo: respuesta.correo,
-              rol: respuesta.rol,
-              esAdmin: respuesta.esAdmin,
-            };
-
-            this.authService.guardarUsuarioConToken(
-              usuarioSesion,
-              respuesta.token
-            );
-
-            this.cargando = false;
-            this.exito = true;
-
-            setTimeout(() => {
-              this.mostrarSnackBar(
-                'Sesión iniciada (sin nombre)',
-                'snackbar-success',
-                'bottom'
-              );
-            }, 1300);
-
-            setTimeout(() => {
-              const returnUrl =
-                this.route.snapshot.queryParamMap.get('returnUrl') || '/home';
-
-              this.router.navigate([returnUrl]).then(() => {
-                window.location.reload();
-              });
-            }, 2500);
-          },
-        });
+          this.router.navigate([returnUrl]).then(() => {
+            window.location.reload();
+          });
+        }, 2500);
       },
       error: (err) => {
         this.cargando = false;
