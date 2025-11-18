@@ -57,10 +57,23 @@ export class Register {
     private snackBar: MatSnackBar
   ) {}
 
+  // Evita que el usuario escriba '@'
+  bloquearArroba(event: KeyboardEvent) {
+    if (event.key === '@') {
+      event.preventDefault();
+    }
+  }
+
   registrar() {
     // Validaciones básicas
     if (!this.nombre || !this.correo || !this.clave || !this.confirmarClave) {
       this.error = 'Completa todos los campos';
+      this.mostrarSnackBar(this.error, 'snackbar-error', 'bottom');
+      return;
+    }
+
+    if (this.correo.includes('@')) {
+      this.error = 'El usuario no debe incluir "@" en el correo';
       this.mostrarSnackBar(this.error, 'snackbar-error', 'bottom');
       return;
     }
@@ -83,6 +96,9 @@ export class Register {
       return;
     }
 
+    // Normalizar correo y agregar dominio fijo
+    const correoFinal = this.correo.trim().toLowerCase() + '@devschool.com';
+
     this.cargando = true;
     this.exito = false;
     this.error = '';
@@ -90,42 +106,34 @@ export class Register {
     const nuevoUsuario: Usuario = {
       nombre: this.nombre,
       apellidos: this.apellidos,
-      correo: this.correo,
+      correo: correoFinal,
       password: this.clave,
     };
 
     this.authService.register(nuevoUsuario).subscribe({
-      next: (resp) => {
+      next: () => {
         this.cargando = false;
         this.exito = true;
-
-        this.mostrarSnackBar(
-          'Registro exitoso.',
-          'snackbar-success',
-          'bottom'
-        );
-
-        setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 2000);
+        this.mostrarSnackBar('Registro exitoso.', 'snackbar-success', 'bottom');
+        setTimeout(() => this.router.navigate(['/login']), 2000);
       },
       error: (err) => {
         this.cargando = false;
-
         if (err?.error?.error === 'El correo ya existe') {
           this.error = 'Este correo ya está registrado.';
-        } else if (err?.error?.error?.includes('activación')) {
-          this.error = 'Ocurrió un error al registrarte.';
         } else {
           this.error = err?.error?.error || 'Ocurrió un error al registrarte.';
         }
-
         this.mostrarSnackBar(this.error, 'snackbar-error', 'bottom');
       },
     });
   }
 
-  private mostrarSnackBar(mensaje: string, panelClass: string, position: 'top' | 'bottom' = 'top') {
+  private mostrarSnackBar(
+    mensaje: string,
+    panelClass: string,
+    position: 'top' | 'bottom' = 'top'
+  ) {
     this.snackBar.open(mensaje, 'Cerrar', {
       duration: 4000,
       horizontalPosition: 'center',

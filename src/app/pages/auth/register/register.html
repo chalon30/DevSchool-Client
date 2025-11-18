@@ -2,19 +2,19 @@
   class="min-h-[calc(100vh-64px)] flex items-center justify-center bg-gradient-to-r from-[#b33038] via-[#d04838] to-[#ff7a00] px-4 py-10"
 >
   <mat-card
-    class="register-card w-full max-w-lg rounded-2xl shadow-2xl bg-[#fff3e9]/90 backdrop-blur-md border border-[#ffb17a] p-8"
+    class="register-card w-full max-w-md sm:max-w-lg rounded-2xl shadow-2xl bg-[#fff3e9]/90 backdrop-blur-md border border-[#ffb17a] p-6 sm:p-8"
   >
     <!-- HEADER -->
-    <div class="flex flex-col items-center gap-3 mb-6">
+    <div class="flex flex-col items-center gap-2 sm:gap-3 mb-6">
       <div
-        class="w-16 h-16 rounded-full bg-[#ff9a54]/30 flex items-center justify-center text-[#ff6a00]"
+        class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#ff9a54]/30 flex items-center justify-center text-[#ff6a00]"
       >
         <mat-icon>person_add</mat-icon>
       </div>
-
-      <h2 class="text-2xl font-bold text-[#b63c2f] tracking-wide">Crear cuenta</h2>
-
-      <p class="text-sm text-[#6d4c41] text-center leading-relaxed">
+      <h2 class="text-xl sm:text-2xl font-bold text-[#b63c2f] tracking-wide text-center">
+        Crear cuenta
+      </h2>
+      <p class="text-xs sm:text-sm text-[#6d4c41] text-center leading-relaxed">
         Regístrate para comenzar a aprender con DevSchool
       </p>
     </div>
@@ -40,9 +40,19 @@
       </mat-form-field>
 
       <!-- CORREO -->
-      <mat-form-field appearance="fill" class="w-full">
+      <mat-form-field appearance="fill" class="w-full correo-container">
         <mat-label>Correo</mat-label>
-        <input matInput [(ngModel)]="correo" name="correo" type="email" required />
+        <input
+          matInput
+          [(ngModel)]="correo"
+          name="correo"
+          type="text"
+          maxlength="20"
+          placeholder="usuario"
+          (keydown)="bloquearArroba($event)"
+          required
+        />
+        <span class="correo-dominio">@devschool.com</span>
         <button mat-icon-button matSuffix type="button" class="register-icon-button">
           <mat-icon>mail</mat-icon>
         </button>
@@ -65,9 +75,7 @@
           class="register-icon-button"
           (click)="hidePassword = !hidePassword"
         >
-          <mat-icon>
-            {{ hidePassword ? 'visibility_off' : 'visibility' }}
-          </mat-icon>
+          <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
         </button>
       </mat-form-field>
 
@@ -88,9 +96,7 @@
           class="register-icon-button"
           (click)="hidePassword2 = !hidePassword2"
         >
-          <mat-icon>
-            {{ hidePassword2 ? 'visibility_off' : 'visibility' }}
-          </mat-icon>
+          <mat-icon>{{ hidePassword2 ? 'visibility_off' : 'visibility' }}</mat-icon>
         </button>
       </mat-form-field>
 
@@ -102,26 +108,17 @@
       <!-- BOTÓN -->
       <button
         mat-raised-button
-        class="w-full py-3 text-lg font-semibold rounded-xl shadow-md bg-[#ff6a00] hover:bg-[#e95f00] active:bg-[#cc5200] text-white transition"
+        class="w-full py-3 text-base sm:text-lg font-semibold rounded-xl shadow-md bg-[#ff6a00] hover:bg-[#e95f00] active:bg-[#cc5200] text-white transition"
         type="submit"
         [disabled]="cargando || exito"
       >
-        <!-- ESTADO normal -->
         <ng-container *ngIf="!cargando && !exito"> Registrarme </ng-container>
-
-        <!-- ESTADO cargando -->
         <ng-container *ngIf="cargando && !exito">
-          <div class="flex items-center justify-center gap-3">
-            <mat-progress-spinner
-              diameter="22"
-              mode="indeterminate"
-              class="!text-white"
-            ></mat-progress-spinner>
+          <div class="flex items-center justify-center gap-2 sm:gap-3">
+            <mat-progress-spinner diameter="20" mode="indeterminate" class="!text-white"></mat-progress-spinner>
             <span>Registrando...</span>
           </div>
         </ng-container>
-
-        <!-- ESTADO éxito -->
         <ng-container *ngIf="exito">
           <div class="flex items-center justify-center gap-2">
             <mat-icon class="!text-white !text-xl">check_circle</mat-icon>
@@ -139,9 +136,7 @@
       <!-- LOGIN LINK -->
       <p class="pt-4 text-center text-sm text-[#6d4c41]">
         ¿Ya tienes una cuenta?
-        <a routerLink="/login" class="text-[#b63c2f] font-semibold hover:underline">
-          Inicia sesión
-        </a>
+        <a routerLink="/login" class="text-[#b63c2f] font-semibold hover:underline">Inicia sesión</a>
       </p>
     </form>
   </mat-card>
