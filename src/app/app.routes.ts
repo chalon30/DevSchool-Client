@@ -12,7 +12,7 @@ export const routes: Routes = [
   { path: '', component: Landing },       
   { path: 'home', component: Home },     
   { path: 'login', component: Login },
-  { path: 'register', component: Register },
+  //{ path: 'register', component: Register },
   { path: 'courses', component: Courses },
 
   { path: 'profile', component: Profile, canActivate: [authGuard] },
