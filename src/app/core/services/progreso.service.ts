@@ -16,10 +16,25 @@ export interface ProgresoCurso {
   leccionesCompletadasIds: number[];
 }
 
+export interface PreguntaRespuestaDTO {
+  preguntaId: number;
+  opcionSeleccionadaId: number;
+}
+
+// DTO que devuelve el backend en /progreso/respuestas/{usuarioId}/{leccionId}
+export interface RespuestaPreguntaDTO {
+  id: number;
+  preguntaId: number;
+  opcionSeleccionadaId: number;
+  correcta: boolean;
+  fechaRespuesta: string; // ISO string
+}
+
 export interface MarcarLeccionCompletadaRequest {
   usuarioId: number;
   cursoId: number;
   leccionId: number;
+  respuestas: PreguntaRespuestaDTO[];
 }
 
 @Injectable({
@@ -57,6 +72,16 @@ export class ProgresoService {
     return this.http.post<ProgresoCurso>(
       `${this.apiUrl}/leccion-completada`,
       payload
+    );
+  }
+
+  /** GET /api/progreso/respuestas/{usuarioId}/{leccionId} */
+  getRespuestasLeccion(
+    usuarioId: number,
+    leccionId: number
+  ): Observable<RespuestaPreguntaDTO[]> {
+    return this.http.get<RespuestaPreguntaDTO[]>(
+      `${this.apiUrl}/respuestas/${usuarioId}/${leccionId}`
     );
   }
 
