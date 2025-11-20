@@ -1,4 +1,3 @@
-// ... imports que ya tienes ...
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -59,6 +58,9 @@ export class CourseDetail implements OnInit {
   usuarioActual: any = null;
   progresoCurso: ProgresoCurso | null = null;
 
+  // leccionId -> si ya se cargó el iframe del video
+  videoCargadoPorLeccion: { [leccionId: number]: boolean } = {};
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -97,6 +99,15 @@ export class CourseDetail implements OnInit {
         this.cargando = false;
       },
     });
+  }
+
+  // ==============================
+  // GETTER LECCIÓN ACTUAL
+  // ==============================
+
+  get leccionActual(): LeccionLinea | null {
+    if (!this.leccionesLineales.length) return null;
+    return this.leccionesLineales[this.indiceStepper] ?? null;
   }
 
   // ==============================
@@ -244,6 +255,10 @@ export class CourseDetail implements OnInit {
     return this.sanitizer.bypassSecurityTrustResourceUrl(
       `https://www.youtube.com/embed/${id}`
     );
+  }
+
+  cargarVideoLeccion(leccion: Leccion): void {
+    this.videoCargadoPorLeccion[leccion.id] = true;
   }
 
   // ==============================

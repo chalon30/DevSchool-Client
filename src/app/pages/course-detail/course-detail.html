@@ -159,12 +159,8 @@
             </button>
           </div>
 
-          <!-- CONTENIDO DE LA LECCIÓN ACTUAL -->
-          <div
-            *ngFor="let item of leccionesLineales; index as i"
-            [class.hidden]="i !== indiceStepper"
-            class="mt-4"
-          >
+          <!-- CONTENIDO DE LA LECCIÓN ACTUAL (solo UNA) -->
+          <div *ngIf="leccionActual as item" class="mt-4">
             <div class="lesson-grid flex flex-col gap-4 sm:gap-5">
               <div
                 class="lesson-card h-full rounded-2xl sm:rounded-3xl border border-slate-700/60 shadow-xl bg-slate-950/90 flex flex-col"
@@ -173,15 +169,44 @@
                 <div
                   class="lesson-video-wrapper rounded-t-2xl sm:rounded-t-3xl overflow-hidden"
                 >
-                  <div class="aspect-video w-full bg-black/60">
-                    <iframe
-                      *ngIf="getVideoUrl(item.leccion) as videoUrl"
-                      class="lesson-video h-full w-full"
-                      [src]="videoUrl"
-                      frameborder="0"
-                      allowfullscreen
-                    ></iframe>
-                  </div>
+                  <!-- Placeholder hasta que el usuario pida cargar el video -->
+                  <ng-container
+                    *ngIf="!videoCargadoPorLeccion[item.leccion.id]; else videoEmbed"
+                  >
+                    <div
+                      class="aspect-video w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col items-center justify-center gap-3 text-center px-4"
+                    >
+                      <button
+                        type="button"
+                        (click)="cargarVideoLeccion(item.leccion)"
+                        class="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-xs sm:text-sm md:text-base font-semibold bg-sky-500 text-slate-950 hover:bg-sky-400 shadow-lg shadow-sky-500/40"
+                      >
+                        <span class="mr-2 text-lg">▶</span>
+                        Cargar y reproducir video
+                      </button>
+                      <p
+                        class="text-[0.7rem] sm:text-xs md:text-sm text-slate-200/80 max-w-md"
+                      >
+                        Para optimizar el rendimiento, el video de YouTube se
+                        cargará solo cuando lo necesites. Haz clic en el botón
+                        para iniciar esta lección.
+                      </p>
+                    </div>
+                  </ng-container>
+
+                  <!-- IFRAME solo cuando se haya pedido -->
+                  <ng-template #videoEmbed>
+                    <div class="aspect-video w-full bg-black/60">
+                      <iframe
+                        *ngIf="getVideoUrl(item.leccion) as videoUrl"
+                        class="lesson-video h-full w-full"
+                        [src]="videoUrl"
+                        frameborder="0"
+                        allowfullscreen
+                        loading="lazy"
+                      ></iframe>
+                    </div>
+                  </ng-template>
                 </div>
 
                 <!-- 2. INTRO / RESUMEN -->
@@ -205,39 +230,47 @@
                     </span>
                   </div>
 
-                  <section class="lesson-intro space-y-3">
-                    <h3
-                      class="lesson-intro-title text-xs sm:text-sm md:text-base font-semibold text-slate-100"
-                    >
-                      Resumen de la lección
-                    </h3>
+                  <section class="lesson-intro space-y-4 sm:space-y-5">
+  <h3
+    class="lesson-intro-title text-sm sm:text-base md:text-lg font-semibold text-slate-100"
+  >
+    Resumen de la lección
+  </h3>
 
-                    <div
-                      class="lesson-chips flex flex-wrap gap-2 text-[0.65rem] sm:text-xs"
-                    >
-                      <span *ngIf="item.leccion.intro1" class="sunset-chip">
-                        {{ item.leccion.intro1 }}
-                      </span>
-                      <span
-                        *ngIf="item.leccion.intro2"
-                        class="sunset-chip sunset-chip-alt1"
-                      >
-                        {{ item.leccion.intro2 }}
-                      </span>
-                      <span
-                        *ngIf="item.leccion.intro3"
-                        class="sunset-chip sunset-chip-alt2"
-                      >
-                        {{ item.leccion.intro3 }}
-                      </span>
-                    </div>
+  <!-- INTRO 1 / 2 / 3 EN GRANDE Y RESPONSIVO -->
+  <div
+  class="lesson-chips flex flex-col gap-3 sm:gap-4 text-sm sm:text-base md:text-lg"
+>
+  <span
+    *ngIf="item.leccion.intro1"
+    class="sunset-chip block w-full px-4 py-3 sm:px-5 sm:py-4 leading-relaxed text-slate-50 text-base sm:text-lg md:text-xl"
+  >
+    {{ item.leccion.intro1 }}
+  </span>
 
-                    <p
-                      class="lesson-text text-xs sm:text-sm md:text-base leading-relaxed text-slate-200/90"
-                    >
-                      {{ item.leccion.contenido }}
-                    </p>
-                  </section>
+  <span
+    *ngIf="item.leccion.intro2"
+    class="sunset-chip-alt1 block w-full px-4 py-3 sm:px-5 sm:py-4 leading-relaxed text-slate-50 text-base sm:text-lg md:text-xl"
+  >
+    {{ item.leccion.intro2 }}
+  </span>
+
+  <span
+    *ngIf="item.leccion.intro3"
+    class="sunset-chip-alt2 block w-full px-4 py-3 sm:px-5 sm:py-4 leading-relaxed text-slate-50 text-base sm:text-lg md:text-xl"
+  >
+    {{ item.leccion.intro3 }}
+  </span>
+</div>
+
+
+  <p
+    class="lesson-text text-xs sm:text-sm md:text-base leading-relaxed text-slate-200/90"
+  >
+    {{ item.leccion.contenido }}
+  </p>
+</section>
+
 
                   <!-- 3. PREGUNTAS -->
                   <section class="lesson-quiz space-y-3 sm:space-4">
@@ -336,7 +369,7 @@
                 type="button"
                 class="btn-prev inline-flex items-center justify-center gap-2 rounded-full border border-slate-600/80 bg-slate-900/80 px-4 py-2 text-xs sm:text-sm md:text-base font-medium text-slate-100 hover:bg-slate-800/80 disabled:opacity-40 disabled:cursor-not-allowed"
                 (click)="irAnterior()"
-                [disabled]="i === 0"
+                [disabled]="indiceStepper === 0"
               >
                 <span class="text-lg">←</span>
                 <span>Anterior</span>
@@ -348,25 +381,25 @@
                 <button
                   type="button"
                   class="btn-mark rounded-full px-4 py-2 text-xs sm:text-sm md:text-base font-semibold bg-emerald-500 text-slate-900 hover:bg-emerald-400 disabled:opacity-40 disabled:cursor-not-allowed"
-                  (click)="marcarLeccionCompleta(i)"
+                  (click)="marcarLeccionCompleta(indiceStepper)"
                   [disabled]="!puedeMarcarCompletada(item.leccion)"
                 >
                   Marcar lección como completada
                 </button>
 
                 <button
-                  *ngIf="i < leccionesLineales.length - 1"
+                  *ngIf="indiceStepper < leccionesLineales.length - 1"
                   type="button"
                   class="btn-next inline-flex items-center justify-center gap-2 rounded-full border border-sky-500/80 bg-slate-900/80 px-4 py-2 text-xs sm:text-sm md:text-base font-medium text-sky-200 hover:bg-sky-500/10 disabled:opacity-40 disabled:cursor-not-allowed"
                   (click)="irSiguiente()"
-                  [disabled]="!stepForms[i].valid"
+                  [disabled]="!stepForms[indiceStepper].valid"
                 >
                   <span>Siguiente</span>
                   <span class="text-lg">→</span>
                 </button>
 
                 <button
-                  *ngIf="i === leccionesLineales.length - 1"
+                  *ngIf="indiceStepper === leccionesLineales.length - 1"
                   type="button"
                   class="btn-finish inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-xs sm:text-sm md:text-base font-semibold bg-gradient-to-r from-amber-400 via-yellow-300 to-emerald-300 text-slate-900 hover:from-amber-300 hover:via-yellow-200 hover:to-emerald-200 disabled:opacity-40 disabled:cursor-not-allowed"
                   (click)="finalizarCurso()"
