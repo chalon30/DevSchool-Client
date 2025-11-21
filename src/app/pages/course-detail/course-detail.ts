@@ -17,7 +17,6 @@ import {
   Modulo,
   Leccion,
   Pregunta,
-  Opcion,
 } from '../../core/model/course.model';
 
 import { AuthService } from '../../core/services/auth.service';
@@ -60,6 +59,9 @@ export class CourseDetail implements OnInit {
 
   // leccionId -> si ya se cargó el iframe del video
   videoCargadoPorLeccion: { [leccionId: number]: boolean } = {};
+
+  // leccionId -> mostrar feedback (correcciones) de esa lección
+  mostrarFeedbackPorLeccion: { [leccionId: number]: boolean } = {};
 
   constructor(
     private route: ActivatedRoute,
@@ -230,10 +232,13 @@ export class CourseDetail implements OnInit {
             });
           }
 
-          // aplicamos lo que vino del backend
+          // aplicamos lo que vino del backend (solo respuestas, sin feedback aún)
           respuestas.forEach((r) => {
             this.respuestasUsuario[r.preguntaId] = r.opcionSeleccionadaId;
           });
+
+          // al entrar a la lección NO mostramos feedback todavía
+          this.mostrarFeedbackPorLeccion[leccionId] = false;
         },
         error: (err) => {
           console.error('Error cargando respuestas de la lección', err);
@@ -265,11 +270,8 @@ export class CourseDetail implements OnInit {
   // QUIZ LÓGICA
   // ==============================
 
-  seleccionarOpcion(pregunta: Pregunta, opcion: Opcion) {
-    this.respuestasUsuario[pregunta.id] = opcion.id;
-  }
-
-  esCorrecta(pregunta: Pregunta): boolean | null {
+  // versión interna: no mira si se debe mostrar feedback o no
+  private esCorrectaInterna(pregunta: Pregunta): boolean | null {
     const seleccionadaId = this.respuestasUsuario[pregunta.id];
     if (!seleccionadaId) return null;
 
@@ -279,11 +281,32 @@ export class CourseDetail implements OnInit {
     return correcta.id === seleccionadaId;
   }
 
+  // versión usada por la plantilla: solo muestra algo si ya se pidió feedback
+  esCorrecta(pregunta: Pregunta, leccionId: number): boolean | null {
+    if (!this.mostrarFeedbackPorLeccion[leccionId]) {
+      return null; // todavía no se muestran correcciones
+    }
+    return this.esCorrectaInterna(pregunta);
+  }
+
+  // ahora solo valida que TODAS las preguntas estén contestadas (no necesariamente bien)
   puedeMarcarCompletada(leccion: Leccion): boolean {
     const tienePreguntas = leccion.preguntas && leccion.preguntas.length > 0;
     if (!tienePreguntas) return true;
 
-    return leccion.preguntas.every((p) => this.esCorrecta(p) === true);
+    return leccion.preguntas.every((p) => !!this.respuestasUsuario[p.id]);
+  }
+
+  // ¿La lección tiene al menos una respuesta incorrecta?
+  tieneRespuestasIncorrectas(leccion: Leccion): boolean {
+    if (!leccion.preguntas || leccion.preguntas.length === 0) {
+      return false;
+    }
+
+    // usamos la versión interna que no depende del flag de feedback
+    return leccion.preguntas.some(
+      (p) => this.esCorrectaInterna(p) === false
+    );
   }
 
   // ==============================
@@ -296,6 +319,7 @@ export class CourseDetail implements OnInit {
 
   irALeccion(idx: number): void {
     if (idx < 0 || idx >= this.leccionesLineales.length) return;
+
     this.indiceStepper = idx;
 
     const leccion = this.leccionesLineales[idx]?.leccion;
@@ -306,11 +330,7 @@ export class CourseDetail implements OnInit {
 
   irAnterior(): void {
     if (this.indiceStepper > 0) {
-      this.indiceStepper--;
-      const leccion = this.leccionesLineales[this.indiceStepper]?.leccion;
-      if (leccion) {
-        this.cargarRespuestasLeccion(leccion.id);
-      }
+      this.irALeccion(this.indiceStepper - 1);
     }
   }
 
@@ -319,12 +339,32 @@ export class CourseDetail implements OnInit {
       this.indiceStepper < this.leccionesLineales.length - 1 &&
       this.stepForms[this.indiceStepper]?.valid
     ) {
-      this.indiceStepper++;
-      const leccion = this.leccionesLineales[this.indiceStepper]?.leccion;
-      if (leccion) {
-        this.cargarRespuestasLeccion(leccion.id);
-      }
+      this.irALeccion(this.indiceStepper + 1);
     }
+  }
+
+  // ==============================
+  // REINTENTAR LECCIÓN
+  // ==============================
+
+  reintentarLeccion(idx: number): void {
+    if (idx < 0 || idx >= this.leccionesLineales.length) return;
+
+    const leccion = this.leccionesLineales[idx]?.leccion;
+    if (!leccion) return;
+
+    // limpiar respuestas de esa lección
+    if (leccion.preguntas) {
+      leccion.preguntas.forEach((p) => {
+        delete this.respuestasUsuario[p.id];
+      });
+    }
+
+    // ocultar feedback
+    this.mostrarFeedbackPorLeccion[leccion.id] = false;
+
+    // desmarcar el form localmente (para obligar a rehacerla correctamente)
+    this.stepForms[idx]?.get('done')?.setValue(false);
   }
 
   // ==============================
@@ -332,13 +372,34 @@ export class CourseDetail implements OnInit {
   // ==============================
 
   marcarLeccionCompleta(idx: number) {
+    if (idx < 0 || idx >= this.leccionesLineales.length) return;
+
     const { leccion } = this.leccionesLineales[idx];
 
-    if (!this.puedeMarcarCompletada(leccion)) return;
+    // siempre que presiona el botón, mostramos correcciones de ESA lección
+    this.mostrarFeedbackPorLeccion[leccion.id] = true;
+
+    const tienePreguntas = leccion.preguntas && leccion.preguntas.length > 0;
+
+    let todasCorrectas = true;
+    if (tienePreguntas) {
+      todasCorrectas = leccion.preguntas.every(
+        (p) => this.esCorrectaInterna(p) === true
+      );
+    }
+
+    // Si hay preguntas y NO todas son correctas:
+    // solo mostramos correcciones, NO marcamos como completada ni llamamos backend
+    if (tienePreguntas && !todasCorrectas) {
+      return;
+    }
+
+    // Desde aquí: o no hay preguntas, o TODAS son correctas
 
     // marcar localmente la lección como completada
     this.stepForms[idx].get('done')?.setValue(true);
 
+    // aseguramos que la siguiente lección requiera validación
     if (this.stepForms[idx + 1]) {
       this.stepForms[idx + 1]
         .get('done')
@@ -350,12 +411,7 @@ export class CourseDetail implements OnInit {
 
     // avanzar automáticamente si no es la última
     if (this.indiceStepper < this.leccionesLineales.length - 1) {
-      this.indiceStepper++;
-      const leccionSiguiente =
-        this.leccionesLineales[this.indiceStepper]?.leccion;
-      if (leccionSiguiente) {
-        this.cargarRespuestasLeccion(leccionSiguiente.id);
-      }
+      this.irALeccion(this.indiceStepper + 1);
     }
 
     if (this.curso && this.usuarioActual?.id) {

@@ -9,9 +9,38 @@ body {
   padding: 0;
 }
 
-/* Fondo oscuro global sin @apply */
+/* Fondo oscuro global */
 body {
   background-color: #131313;
-  color: #e5e7eb;             
+  color: #e5e7eb;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+/* =========================================================
+   🎨 ESTILOS GLOBALES DEL SCROLL
+   ========================================================= */
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #38bdf8 #0f172a; /* thumb, track */
+}
+
+/* Chrome / Edge / Safari */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0f172a; /* azul oscuro, combina con tu tema sunset */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #38bdf8; /* sky-400 */
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0ea5e9; /* sky-500 */
 }

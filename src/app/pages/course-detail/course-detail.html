@@ -147,7 +147,8 @@
                   'text-slate-100': i !== indiceStepper && !isStepCompletado(i)
                 }"
               >
-                M{{ item.modulo.numeroOrden }} · L{{ item.leccion.numeroOrden }}
+                M{{ item.modulo.numeroOrden }} · L{{ item.leccion.numeroOrden
+                }}
               </span>
 
               <span
@@ -171,7 +172,10 @@
                 >
                   <!-- Placeholder hasta que el usuario pida cargar el video -->
                   <ng-container
-                    *ngIf="!videoCargadoPorLeccion[item.leccion.id]; else videoEmbed"
+                    *ngIf="
+                      !videoCargadoPorLeccion[item.leccion.id];
+                      else videoEmbed
+                    "
                   >
                     <div
                       class="aspect-video w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col items-center justify-center gap-3 text-center px-4"
@@ -224,56 +228,53 @@
                     <span
                       class="lesson-pill inline-flex items-center rounded-full px-3 py-1 text-[0.65rem] sm:text-xs font-semibold uppercase tracking-wide shadow-sm bg-sky-500/15 text-sky-300 border border-sky-500/50"
                     >
-                      M{{ item.modulo.numeroOrden }} · L{{
-                        item.leccion.numeroOrden
-                      }}
+                      M{{ item.modulo.numeroOrden }} · L{{ item.leccion
+                      .numeroOrden }}
                     </span>
                   </div>
 
                   <section class="lesson-intro space-y-4 sm:space-y-5">
-  <h3
-    class="lesson-intro-title text-sm sm:text-base md:text-lg font-semibold text-slate-100"
-  >
-    Resumen de la lección
-  </h3>
+                    <h3
+                      class="lesson-intro-title text-sm sm:text-base md:text-lg font-semibold text-slate-100"
+                    >
+                      Resumen de la lección
+                    </h3>
 
-  <!-- INTRO 1 / 2 / 3 EN GRANDE Y RESPONSIVO -->
-  <div
-  class="lesson-chips flex flex-col gap-3 sm:gap-4 text-sm sm:text-base md:text-lg"
->
-  <span
-    *ngIf="item.leccion.intro1"
-    class="sunset-chip block w-full px-4 py-3 sm:px-5 sm:py-4 leading-relaxed text-slate-50 text-base sm:text-lg md:text-xl"
-  >
-    {{ item.leccion.intro1 }}
-  </span>
+                    <!-- INTRO 1 / 2 / 3 EN GRANDE Y RESPONSIVO -->
+                    <div
+                      class="lesson-chips flex flex-col gap-3 sm:gap-4 text-sm sm:text-base md:text-lg"
+                    >
+                      <span
+                        *ngIf="item.leccion.intro1"
+                        class="sunset-chip block w-full px-4 py-3 sm:px-5 sm:py-4 leading-relaxed text-slate-50 text-base sm:text-lg md:text-xl"
+                      >
+                        {{ item.leccion.intro1 }}
+                      </span>
 
-  <span
-    *ngIf="item.leccion.intro2"
-    class="sunset-chip-alt1 block w-full px-4 py-3 sm:px-5 sm:py-4 leading-relaxed text-slate-50 text-base sm:text-lg md:text-xl"
-  >
-    {{ item.leccion.intro2 }}
-  </span>
+                      <span
+                        *ngIf="item.leccion.intro2"
+                        class="sunset-chip-alt1 block w-full px-4 py-3 sm:px-5 sm:py-4 leading-relaxed text-slate-50 text-base sm:text-lg md:text-xl"
+                      >
+                        {{ item.leccion.intro2 }}
+                      </span>
 
-  <span
-    *ngIf="item.leccion.intro3"
-    class="sunset-chip-alt2 block w-full px-4 py-3 sm:px-5 sm:py-4 leading-relaxed text-slate-50 text-base sm:text-lg md:text-xl"
-  >
-    {{ item.leccion.intro3 }}
-  </span>
-</div>
+                      <span
+                        *ngIf="item.leccion.intro3"
+                        class="sunset-chip-alt2 block w-full px-4 py-3 sm:px-5 sm:py-4 leading-relaxed text-slate-50 text-base sm:text-lg md:text-xl"
+                      >
+                        {{ item.leccion.intro3 }}
+                      </span>
+                    </div>
 
-
-  <p
-    class="lesson-text text-xs sm:text-sm md:text-base leading-relaxed text-slate-200/90"
-  >
-    {{ item.leccion.contenido }}
-  </p>
-</section>
-
+                    <p
+                      class="lesson-text text-xs sm:text-sm md:text-base leading-relaxed text-slate-200/90"
+                    >
+                      {{ item.leccion.contenido }}
+                    </p>
+                  </section>
 
                   <!-- 3. PREGUNTAS -->
-                  <section class="lesson-quiz space-y-3 sm:space-4">
+                  <section class="lesson-quiz space-y-3 sm:space-y-4">
                     <h3
                       class="quiz-title flex items-center gap-2 text-xs sm:text-sm md:text-base font-semibold text-slate-100"
                     >
@@ -285,8 +286,9 @@
                       Preguntas rápidas
                     </h3>
 
+                    <!-- Usamos ?.length para evitar error si no hay preguntas -->
                     <ng-container
-                      *ngIf="item.leccion.preguntas.length; else sinQuiz"
+                      *ngIf="item.leccion.preguntas?.length; else sinQuiz"
                     >
                       <div
                         *ngFor="let pregunta of item.leccion.preguntas"
@@ -318,17 +320,21 @@
                           </label>
                         </div>
 
-                        <ng-container [ngSwitch]="esCorrecta(pregunta)">
+                        <ng-container
+                          [ngSwitch]="esCorrecta(pregunta, item.leccion.id)"
+                        >
                           <p
                             *ngSwitchCase="true"
                             class="quiz-feedback quiz-feedback-correct flex items-start gap-2 rounded-xl px-3 py-2 text-[0.7rem] sm:text-xs md:text-sm bg-emerald-500/10 border border-emerald-400/60 text-emerald-200"
                           >
                             <span
-                              class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-400/80 text-slate-900 text-xs mt-0.5"
+                              class="quiz-feedback-icon quiz-feedback-icon-correct"
                             >
                               ✓
                             </span>
-                            <span> ¡Correcto! {{ pregunta.explicacion }} </span>
+                            <span>
+                              ¡Correcto! {{ pregunta.explicacion }}
+                            </span>
                           </p>
 
                           <p
@@ -336,7 +342,7 @@
                             class="quiz-feedback quiz-feedback-incorrect flex items-start gap-2 rounded-xl px-3 py-2 text-[0.7rem] sm:text-xs md:text-sm bg-red-500/10 border border-red-400/60 text-red-200"
                           >
                             <span
-                              class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-400/80 text-slate-900 text-xs mt-0.5"
+                              class="quiz-feedback-icon quiz-feedback-icon-incorrect"
                             >
                               ✕
                             </span>
@@ -378,6 +384,20 @@
               <div
                 class="lesson-controls-right flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end"
               >
+                <!-- Botón reintentar: solo si se está mostrando feedback y hay alguna incorrecta -->
+                <button
+                  type="button"
+                  class="inline-flex items-center justify-center gap-2 rounded-full border border-amber-400/80 bg-slate-900/80 px-4 py-2 text-xs sm:text-sm md:text-base font-medium text-amber-200 hover:bg-amber-400/10"
+                  *ngIf="
+                    mostrarFeedbackPorLeccion[item.leccion.id] &&
+                    tieneRespuestasIncorrectas(item.leccion)
+                  "
+                  (click)="reintentarLeccion(indiceStepper)"
+                >
+                  <span class="text-lg">↻</span>
+                  <span>Intentar nuevamente la lección</span>
+                </button>
+
                 <button
                   type="button"
                   class="btn-mark rounded-full px-4 py-2 text-xs sm:text-sm md:text-base font-semibold bg-emerald-500 text-slate-900 hover:bg-emerald-400 disabled:opacity-40 disabled:cursor-not-allowed"
@@ -392,7 +412,7 @@
                   type="button"
                   class="btn-next inline-flex items-center justify-center gap-2 rounded-full border border-sky-500/80 bg-slate-900/80 px-4 py-2 text-xs sm:text-sm md:text-base font-medium text-sky-200 hover:bg-sky-500/10 disabled:opacity-40 disabled:cursor-not-allowed"
                   (click)="irSiguiente()"
-                  [disabled]="!stepForms[indiceStepper].valid"
+                  [disabled]="!stepForms[indiceStepper]?.valid"
                 >
                   <span>Siguiente</span>
                   <span class="text-lg">→</span>
