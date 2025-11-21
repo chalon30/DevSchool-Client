@@ -1,4 +1,28 @@
 <div class="course-detail-wrapper w-full">
+  <!-- TOAST GLOBAL -->
+  <div *ngIf="tipoMensaje" class="fixed top-4 left-0 right-0 z-50 flex justify-center px-4">
+    <div
+      class="max-w-md w-full rounded-2xl px-4 py-3 text-xs sm:text-sm md:text-base shadow-xl border backdrop-blur-md flex items-center gap-3"
+      [ngClass]="{
+        'bg-emerald-500/15 border-emerald-400/70 text-emerald-100': tipoMensaje === 'success',
+        'bg-red-500/15 border-red-400/70 text-red-100': tipoMensaje === 'error'
+      }"
+    >
+      <span
+        class="flex h-7 w-7 items-center justify-center rounded-full text-sm"
+        [ngClass]="{
+          'bg-emerald-400/20 text-emerald-200': tipoMensaje === 'success',
+          'bg-red-400/20 text-red-200': tipoMensaje === 'error'
+        }"
+      >
+        {{ tipoMensaje === 'success' ? '✓' : '!' }}
+      </span>
+      <span class="font-medium">
+        {{ mensajeGlobal }}
+      </span>
+    </div>
+  </div>
+
   <!-- Fondo y overlay -->
   <div class="course-detail-bg"></div>
   <div class="course-detail-overlay"></div>
@@ -41,9 +65,7 @@
       <header
         class="course-header rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-xl border border-slate-700/60 bg-slate-900/70 backdrop-blur-md"
       >
-        <div
-          class="flex flex-col gap-5 md:gap-6 lg:flex-row lg:items-center lg:justify-between"
-        >
+        <div class="flex flex-col gap-5 md:gap-6 lg:flex-row lg:items-center lg:justify-between">
           <!-- izquierda: título -->
           <div class="space-y-3 max-w-2xl">
             <h1
@@ -76,9 +98,7 @@
               Progreso del curso
             </span>
 
-            <div
-              class="mt-3 h-3 w-full rounded-full bg-slate-800/90 overflow-hidden"
-            >
+            <div class="mt-3 h-3 w-full rounded-full bg-slate-800/90 overflow-hidden">
               <div
                 class="h-full rounded-full bg-gradient-to-r from-sky-400 via-cyan-300 to-emerald-300 transition-all duration-300"
                 [style.width.%]="getProgresoCurso()"
@@ -103,18 +123,14 @@
           <div
             class="flex items-center justify-between gap-2 text-[0.7rem] sm:text-xs text-slate-300/80 px-1"
           >
-            <span class="font-semibold uppercase tracking-[0.2em]">
-              Mapa del curso
-            </span>
+            <span class="font-semibold uppercase tracking-[0.2em]"> Mapa del curso </span>
             <span class="hidden sm:inline-block">
               Desplázate horizontalmente para ver todas las lecciones
             </span>
           </div>
 
           <!-- chips de pasos -->
-          <div
-            class="mt-1 flex items-center gap-2 overflow-x-auto pb-2 pt-1 snap-x snap-mandatory"
-          >
+          <div class="mt-1 flex items-center gap-2 overflow-x-auto pb-2 pt-1 snap-x snap-mandatory">
             <button
               *ngFor="let item of leccionesLineales; index as i"
               type="button"
@@ -147,8 +163,7 @@
                   'text-slate-100': i !== indiceStepper && !isStepCompletado(i)
                 }"
               >
-                M{{ item.modulo.numeroOrden }} · L{{ item.leccion.numeroOrden
-                }}
+                M{{ item.modulo.numeroOrden }} · L{{ item.leccion.numeroOrden }}
               </span>
 
               <span
@@ -167,16 +182,9 @@
                 class="lesson-card h-full rounded-2xl sm:rounded-3xl border border-slate-700/60 shadow-xl bg-slate-950/90 flex flex-col"
               >
                 <!-- 1. VIDEO -->
-                <div
-                  class="lesson-video-wrapper rounded-t-2xl sm:rounded-t-3xl overflow-hidden"
-                >
+                <div class="lesson-video-wrapper rounded-t-2xl sm:rounded-t-3xl overflow-hidden">
                   <!-- Placeholder hasta que el usuario pida cargar el video -->
-                  <ng-container
-                    *ngIf="
-                      !videoCargadoPorLeccion[item.leccion.id];
-                      else videoEmbed
-                    "
-                  >
+                  <ng-container *ngIf="!videoCargadoPorLeccion[item.leccion.id]; else videoEmbed">
                     <div
                       class="aspect-video w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col items-center justify-center gap-3 text-center px-4"
                     >
@@ -188,12 +196,9 @@
                         <span class="mr-2 text-lg">▶</span>
                         Cargar y reproducir video
                       </button>
-                      <p
-                        class="text-[0.7rem] sm:text-xs md:text-sm text-slate-200/80 max-w-md"
-                      >
-                        Para optimizar el rendimiento, el video de YouTube se
-                        cargará solo cuando lo necesites. Haz clic en el botón
-                        para iniciar esta lección.
+                      <p class="text-[0.7rem] sm:text-xs md:text-sm text-slate-200/80 max-w-md">
+                        Para optimizar el rendimiento, el video de YouTube se cargará solo cuando lo
+                        necesites. Haz clic en el botón para iniciar esta lección.
                       </p>
                     </div>
                   </ng-container>
@@ -214,9 +219,7 @@
                 </div>
 
                 <!-- 2. INTRO / RESUMEN -->
-                <div
-                  class="lesson-body p-3 sm:p-4 md:p-5 lg:p-6 space-y-4 sm:space-y-5"
-                >
+                <div class="lesson-body p-3 sm:p-4 md:p-5 lg:p-6 space-y-4 sm:space-y-5">
                   <div
                     class="lesson-header flex flex-wrap items-start sm:items-center justify-between gap-3"
                   >
@@ -228,8 +231,7 @@
                     <span
                       class="lesson-pill inline-flex items-center rounded-full px-3 py-1 text-[0.65rem] sm:text-xs font-semibold uppercase tracking-wide shadow-sm bg-sky-500/15 text-sky-300 border border-sky-500/50"
                     >
-                      M{{ item.modulo.numeroOrden }} · L{{ item.leccion
-                      .numeroOrden }}
+                      M{{ item.modulo.numeroOrden }} · L{{ item.leccion.numeroOrden }}
                     </span>
                   </div>
 
@@ -287,9 +289,7 @@
                     </h3>
 
                     <!-- Usamos ?.length para evitar error si no hay preguntas -->
-                    <ng-container
-                      *ngIf="item.leccion.preguntas?.length; else sinQuiz"
-                    >
+                    <ng-container *ngIf="item.leccion.preguntas?.length; else sinQuiz">
                       <div
                         *ngFor="let pregunta of item.leccion.preguntas"
                         class="quiz-question rounded-2xl border border-slate-700/60 bg-slate-900/80 p-3 sm:p-4 space-y-3"
@@ -313,42 +313,30 @@
                               [name]="'pregunta-' + pregunta.id"
                               [value]="opcion.id"
                               [(ngModel)]="respuestasUsuario[pregunta.id]"
+                              [disabled]="quizBloqueadoPorLeccion[item.leccion.id]"
                             />
+
                             <span class="text-slate-50">
                               {{ opcion.texto }}
                             </span>
                           </label>
                         </div>
 
-                        <ng-container
-                          [ngSwitch]="esCorrecta(pregunta, item.leccion.id)"
-                        >
+                        <ng-container [ngSwitch]="esCorrecta(pregunta, item.leccion.id)">
                           <p
                             *ngSwitchCase="true"
                             class="quiz-feedback quiz-feedback-correct flex items-start gap-2 rounded-xl px-3 py-2 text-[0.7rem] sm:text-xs md:text-sm bg-emerald-500/10 border border-emerald-400/60 text-emerald-200"
                           >
-                            <span
-                              class="quiz-feedback-icon quiz-feedback-icon-correct"
-                            >
-                              ✓
-                            </span>
-                            <span>
-                              ¡Correcto! {{ pregunta.explicacion }}
-                            </span>
+                            <span class="quiz-feedback-icon quiz-feedback-icon-correct"> ✓ </span>
+                            <span> ¡Correcto! {{ pregunta.explicacion }} </span>
                           </p>
 
                           <p
                             *ngSwitchCase="false"
                             class="quiz-feedback quiz-feedback-incorrect flex items-start gap-2 rounded-xl px-3 py-2 text-[0.7rem] sm:text-xs md:text-sm bg-red-500/10 border border-red-400/60 text-red-200"
                           >
-                            <span
-                              class="quiz-feedback-icon quiz-feedback-icon-incorrect"
-                            >
-                              ✕
-                            </span>
-                            <span>
-                              Incorrecto. {{ pregunta.explicacion }}
-                            </span>
+                            <span class="quiz-feedback-icon quiz-feedback-icon-incorrect"> ✕ </span>
+                            <span> Incorrecto. {{ pregunta.explicacion }} </span>
                           </p>
                         </ng-container>
                       </div>
@@ -358,8 +346,8 @@
                       <p
                         class="quiz-no-questions text-xs sm:text-sm md:text-base text-slate-200/90"
                       >
-                        Esta lección no tiene preguntas. Puedes marcarla como
-                        completada cuando termines el video.
+                        Esta lección no tiene preguntas. Puedes marcarla como completada cuando
+                        termines el video.
                       </p>
                     </ng-template>
                   </section>

@@ -12,12 +12,7 @@ import {
 } from '@angular/forms';
 
 import { CourseService } from '../../core/services/course.service';
-import {
-  Curso,
-  Modulo,
-  Leccion,
-  Pregunta,
-} from '../../core/model/course.model';
+import { Curso, Modulo, Leccion, Pregunta } from '../../core/model/course.model';
 
 import { AuthService } from '../../core/services/auth.service';
 import {
@@ -63,6 +58,13 @@ export class CourseDetail implements OnInit {
   // leccionId -> mostrar feedback (correcciones) de esa lección
   mostrarFeedbackPorLeccion: { [leccionId: number]: boolean } = {};
 
+  // leccionId -> si el quiz está bloqueado (no se puede cambiar la respuesta)
+  quizBloqueadoPorLeccion: { [leccionId: number]: boolean } = {};
+
+  // Mensajes globales (toast)
+  tipoMensaje: 'success' | 'error' | null = null;
+  mensajeGlobal: string = '';
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -76,8 +78,7 @@ export class CourseDetail implements OnInit {
   ngOnInit(): void {
     this.usuarioActual = this.authService.getUsuarioActual();
     if (!this.usuarioActual) {
-      const returnUrl =
-        this.router.url || `/courses/${this.route.snapshot.paramMap.get('id')}`;
+      const returnUrl = this.router.url || `/courses/${this.route.snapshot.paramMap.get('id')}`;
       this.router.navigate(['/login'], { queryParams: { returnUrl } });
       return;
     }
@@ -104,6 +105,31 @@ export class CourseDetail implements OnInit {
   }
 
   // ==============================
+  // UTIL: MENSAJES & SCROLL
+  // ==============================
+
+  private mostrarToast(tipo: 'success' | 'error', texto: string): void {
+    this.tipoMensaje = tipo;
+    this.mensajeGlobal = texto;
+
+    // Ocultar automáticamente después de 3 segundos
+    setTimeout(() => {
+      if (this.tipoMensaje === tipo && this.mensajeGlobal === texto) {
+        this.tipoMensaje = null;
+        this.mensajeGlobal = '';
+      }
+    }, 3000);
+  }
+
+  private scrollToTop(): void {
+    if (typeof window !== 'undefined') {
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 50);
+    }
+  }
+
+  // ==============================
   // GETTER LECCIÓN ACTUAL
   // ==============================
 
@@ -119,18 +145,16 @@ export class CourseDetail implements OnInit {
   private cargarProgresoCurso() {
     if (!this.curso || !this.usuarioActual?.id) return;
 
-    this.progresoService
-      .getProgresoCurso(this.curso.id, this.usuarioActual.id)
-      .subscribe({
-        next: (progreso) => {
-          this.progresoCurso = progreso;
-          this.progresoService.actualizarProgresoLocal(progreso);
-          this.aplicarProgresoEnStepper();
-        },
-        error: () => {
-          // sin progreso inicial, no pasa nada
-        },
-      });
+    this.progresoService.getProgresoCurso(this.curso.id, this.usuarioActual.id).subscribe({
+      next: (progreso) => {
+        this.progresoCurso = progreso;
+        this.progresoService.actualizarProgresoLocal(progreso);
+        this.aplicarProgresoEnStepper();
+      },
+      error: () => {
+        // sin progreso inicial, no pasa nada
+      },
+    });
   }
 
   private inicializarLeccionesLineales() {
@@ -193,9 +217,7 @@ export class CourseDetail implements OnInit {
     } else if (idsCompletadas.length > 0) {
       // fallback: si no hay ultimaLeccionId, usar la última lección completada
       const lastCompletedId = idsCompletadas[idsCompletadas.length - 1];
-      const foundLast = this.leccionesLineales.find(
-        (ll) => ll.leccion.id === lastCompletedId
-      );
+      const foundLast = this.leccionesLineales.find((ll) => ll.leccion.id === lastCompletedId);
       if (foundLast) {
         initialIndex = foundLast.index;
       }
@@ -217,33 +239,31 @@ export class CourseDetail implements OnInit {
   private cargarRespuestasLeccion(leccionId: number) {
     if (!this.usuarioActual?.id) return;
 
-    this.progresoService
-      .getRespuestasLeccion(this.usuarioActual.id, leccionId)
-      .subscribe({
-        next: (respuestas: RespuestaPreguntaDTO[]) => {
-          // limpiamos primero las respuestas de esa lección
-          const leccion = this.leccionesLineales.find(
-            (ll) => ll.leccion.id === leccionId
-          )?.leccion;
+    this.progresoService.getRespuestasLeccion(this.usuarioActual.id, leccionId).subscribe({
+      next: (respuestas: RespuestaPreguntaDTO[]) => {
+        // limpiamos primero las respuestas de esa lección
+        const leccion = this.leccionesLineales.find((ll) => ll.leccion.id === leccionId)?.leccion;
 
-          if (leccion?.preguntas) {
-            leccion.preguntas.forEach((p) => {
-              delete this.respuestasUsuario[p.id];
-            });
-          }
-
-          // aplicamos lo que vino del backend (solo respuestas, sin feedback aún)
-          respuestas.forEach((r) => {
-            this.respuestasUsuario[r.preguntaId] = r.opcionSeleccionadaId;
+        if (leccion?.preguntas) {
+          leccion.preguntas.forEach((p) => {
+            delete this.respuestasUsuario[p.id];
           });
+        }
 
-          // al entrar a la lección NO mostramos feedback todavía
-          this.mostrarFeedbackPorLeccion[leccionId] = false;
-        },
-        error: (err) => {
-          console.error('Error cargando respuestas de la lección', err);
-        },
-      });
+        // aplicamos lo que vino del backend (solo respuestas, sin feedback aún)
+        respuestas.forEach((r) => {
+          this.respuestasUsuario[r.preguntaId] = r.opcionSeleccionadaId;
+        });
+
+        // al entrar a la lección NO mostramos feedback todavía
+        this.mostrarFeedbackPorLeccion[leccionId] = false;
+        // y permitimos responder
+        this.quizBloqueadoPorLeccion[leccionId] = false;
+      },
+      error: (err) => {
+        console.error('Error cargando respuestas de la lección', err);
+      },
+    });
   }
 
   // ==============================
@@ -257,9 +277,7 @@ export class CourseDetail implements OnInit {
     const match = url.match(/v=([^&]+)/);
     const id = match ? match[1] : url;
 
-    return this.sanitizer.bypassSecurityTrustResourceUrl(
-      `https://www.youtube.com/embed/${id}`
-    );
+    return this.sanitizer.bypassSecurityTrustResourceUrl(`https://www.youtube.com/embed/${id}`);
   }
 
   cargarVideoLeccion(leccion: Leccion): void {
@@ -304,9 +322,7 @@ export class CourseDetail implements OnInit {
     }
 
     // usamos la versión interna que no depende del flag de feedback
-    return leccion.preguntas.some(
-      (p) => this.esCorrectaInterna(p) === false
-    );
+    return leccion.preguntas.some((p) => this.esCorrectaInterna(p) === false);
   }
 
   // ==============================
@@ -331,6 +347,7 @@ export class CourseDetail implements OnInit {
   irAnterior(): void {
     if (this.indiceStepper > 0) {
       this.irALeccion(this.indiceStepper - 1);
+      this.scrollToTop();
     }
   }
 
@@ -340,6 +357,7 @@ export class CourseDetail implements OnInit {
       this.stepForms[this.indiceStepper]?.valid
     ) {
       this.irALeccion(this.indiceStepper + 1);
+      this.scrollToTop();
     }
   }
 
@@ -363,8 +381,17 @@ export class CourseDetail implements OnInit {
     // ocultar feedback
     this.mostrarFeedbackPorLeccion[leccion.id] = false;
 
+    // DESBLOQUEAR quiz para que pueda cambiar respuestas
+    this.quizBloqueadoPorLeccion[leccion.id] = false;
+
     // desmarcar el form localmente (para obligar a rehacerla correctamente)
     this.stepForms[idx]?.get('done')?.setValue(false);
+
+    // limpiar mensaje de error al reintentar
+    if (this.tipoMensaje === 'error') {
+      this.tipoMensaje = null;
+      this.mensajeGlobal = '';
+    }
   }
 
   // ==============================
@@ -378,19 +405,20 @@ export class CourseDetail implements OnInit {
 
     // siempre que presiona el botón, mostramos correcciones de ESA lección
     this.mostrarFeedbackPorLeccion[leccion.id] = true;
+    // Bloqueamos las opciones al corregir
+    this.quizBloqueadoPorLeccion[leccion.id] = true;
 
     const tienePreguntas = leccion.preguntas && leccion.preguntas.length > 0;
 
     let todasCorrectas = true;
     if (tienePreguntas) {
-      todasCorrectas = leccion.preguntas.every(
-        (p) => this.esCorrectaInterna(p) === true
-      );
+      todasCorrectas = leccion.preguntas.every((p) => this.esCorrectaInterna(p) === true);
     }
 
     // Si hay preguntas y NO todas son correctas:
-    // solo mostramos correcciones, NO marcamos como completada ni llamamos backend
+    // solo mostramos correcciones y mensaje de error, NO marcamos como completada ni llamamos backend
     if (tienePreguntas && !todasCorrectas) {
+      this.mostrarToast('error', 'Hay respuestas incorrectas. Mal, vuelve a intentar.');
       return;
     }
 
@@ -401,31 +429,35 @@ export class CourseDetail implements OnInit {
 
     // aseguramos que la siguiente lección requiera validación
     if (this.stepForms[idx + 1]) {
-      this.stepForms[idx + 1]
-        .get('done')
-        ?.setValidators(Validators.requiredTrue);
-      this.stepForms[idx + 1]
-        .get('done')
-        ?.updateValueAndValidity({ emitEvent: false });
+      this.stepForms[idx + 1].get('done')?.setValidators(Validators.requiredTrue);
+      this.stepForms[idx + 1].get('done')?.updateValueAndValidity({ emitEvent: false });
     }
+
+    // Mostrar mensaje de felicitación
+    this.mostrarToast(
+      'success',
+      '¡Felicitaciones! Has completado la lección, pasando a la siguiente.'
+    );
 
     // avanzar automáticamente si no es la última
     if (this.indiceStepper < this.leccionesLineales.length - 1) {
       this.irALeccion(this.indiceStepper + 1);
     }
 
+    // subir al inicio de la ventana (nueva lección)
+    this.scrollToTop();
+
     if (this.curso && this.usuarioActual?.id) {
       // construir las respuestas para esta lección
-      const respuestas =
-        (leccion.preguntas || [])
-          .map((p) => ({
-            preguntaId: p.id,
-            opcionSeleccionadaId: this.respuestasUsuario[p.id],
-          }))
-          .filter((r) => !!r.opcionSeleccionadaId) as {
-          preguntaId: number;
-          opcionSeleccionadaId: number;
-        }[];
+      const respuestas = (leccion.preguntas || [])
+        .map((p) => ({
+          preguntaId: p.id,
+          opcionSeleccionadaId: this.respuestasUsuario[p.id],
+        }))
+        .filter((r) => !!r.opcionSeleccionadaId) as {
+        preguntaId: number;
+        opcionSeleccionadaId: number;
+      }[];
 
       const payload: MarcarLeccionCompletadaRequest = {
         usuarioId: this.usuarioActual.id,
@@ -456,18 +488,13 @@ export class CourseDetail implements OnInit {
     }
 
     if (!this.stepForms.length) return 0;
-    const completados = this.stepForms.filter(
-      (fg) => fg.get('done')?.value === true
-    ).length;
+    const completados = this.stepForms.filter((fg) => fg.get('done')?.value === true).length;
     return Math.round((completados / this.stepForms.length) * 100);
   }
 
   cursoCompletado(): boolean {
     if (this.progresoCurso) {
-      return (
-        this.progresoCurso.cursoCompletado ||
-        this.progresoCurso.porcentaje >= 100
-      );
+      return this.progresoCurso.cursoCompletado || this.progresoCurso.porcentaje >= 100;
     }
     return this.getProgresoCurso() >= 100;
   }
